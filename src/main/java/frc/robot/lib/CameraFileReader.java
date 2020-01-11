@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Reader;
+import java.io.StringReader;
 
 
 /**
@@ -97,7 +99,7 @@ public class CameraFileReader {
         JsonObject obj = null;
         JsonElement top;
         try {
-            top = new JsonParser().parse(Files.newBufferedReader(Paths.get(fileName)));
+            top = JsonParser.parseString(Files.readString(Paths.get(fileName)));
         } catch (Exception ex) {
             RioLogger.errorLog("JSON Parser could not open file. " + ex);
             return false;

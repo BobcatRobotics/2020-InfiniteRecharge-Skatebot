@@ -6,10 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
-public class SmartDashLog extends SendableBase implements Sendable {
+public class SmartDashLog implements Sendable {
 
 	private static final int MAX_LINES = 10;
 	private static List<String> lines = new ArrayList<String>();
@@ -36,14 +35,12 @@ public class SmartDashLog extends SendableBase implements Sendable {
 		builder.setSmartDashboardType("Log Display");
 
 		// Add most recent MAX_LINES to display
-		currentLine = (lines.size() < MAX_LINES ?  0 : lines.size() - MAX_LINES);
+		currentLine = (lines.size() < MAX_LINES ? 0 : lines.size() - MAX_LINES);
 		int linesToDisplay = (lines.size() < MAX_LINES ? lines.size() : currentLine + MAX_LINES);
-		
+
 		List<String> lineView = lines.subList(currentLine, linesToDisplay);
-		builder.addStringArrayProperty
-		  ("LOG", 
-		    () -> { return lineView.toArray(new String[0]);}, 
-			null
-		  );
+		builder.addStringArrayProperty("LOG", () -> {
+			return lineView.toArray(new String[0]);
+		}, null);
 	}
 }
