@@ -4,90 +4,173 @@
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
+
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.robot.commands.DriveSkateBot;
-import frc.robot.lib.RioLoggerThread;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
  * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
  */
 public class Robot extends TimedRobot {
-  static OI oi = new OI();
-  static boolean commandsStarted = false;
-  static boolean loggerInit = false;
+  private final WPI_TalonSRX leftTalon = new WPI_TalonSRX(7);
+  private final WPI_TalonSRX rightTalon = new WPI_TalonSRX(8);
+  private final WPI_TalonSRX turretTalon = new WPI_TalonSRX(10);
 
-  // Command m_autonomousCommand;
-  // SendableChooser<Command> m_chooser = new SendableChooser<>();
-  Command m_DriveWithJoysticks;
-  // Command m_MoveElevator;
-  // Command m_RunWrist;
+  private final DifferentialDrive m_robotDrive = new DifferentialDrive(leftTalon, rightTalon);
+  private final Joystick l_stick = new Joystick(0);
+  private final Joystick r_stick = new Joystick(1);
+  private final XboxController gamePad = new XboxController(2);
 
+  private double leftStick = 0.0;
+  private double rightStick = 0.0;
+  private double leftVelocity = 0.0;
+  private double leftDistance = 0.0;
+  private double rightDistance = 0.0;
+  private double rightVelocity = 0.0;
+
+  private double turretStick = 0.0;
+  private double turretVelocity = 0.0;
+  private double turretDistance = 0.0;
+
+  private NetworkTable limelight = null;
+
+  /**
+   * This function is run when the robot is first started up and should be
+   * used for any initialization code.
+   */
   @Override
   public void robotInit() {
+    // Disable the Limelight on start so people don't get blinded
+    limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    limelight.getEntry("ledMode").setNumber(1);
 
-    m_DriveWithJoysticks = new DriveSkateBot();
-    // m_MoveElevator = new MoveElevator();
-    // m_RunWrist = new RunWrist();
+    // Flip the phase of the encoder for use with SRX motion magic, etc.
+    // and set current position to 0.0;
+    leftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
+    leftTalon.setSelectedSensorPosition(0,0,0);
+    leftTalon.setSensorPhase(true);
+
+    rightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
+    rightTalon.setSelectedSensorPosition(0,0,0);
+    rightTalon.setSensorPhase(false);
+
+    turretTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
+    turretTalon.setSelectedSensorPosition(0,0,0);
+    turretTalon.setSensorPhase(false);
   }
 
-  @Override
-  public void robotPeriodic() {
-  }
-
-  @Override
-  public void disabledInit() {
-  }
-
-  @Override
-  public void disabledPeriodic() {
-  }
-
+  /**
+   * This function is run once each time the robot enters autonomous mode.
+   */
   @Override
   public void autonomousInit() {
-    startCommands();
   }
 
+  /**
+   * This function is called periodically during autonomous.
+   */
   @Override
   public void autonomousPeriodic() {
-    Scheduler.getInstance().run();
   }
 
+  /**
+   * This function is called once each time the robot enters teleoperated mode.
+   */
   @Override
   public void teleopInit() {
-    startCommands();
-    if (!loggerInit) {
-      RioLoggerThread.getInstance();
-      RioLoggerThread.setLoggingParameters(600, 60); // 10 mins, 1 min
-      loggerInit = true;
-    }
   }
 
+  /**
+   * This function is called periodically during teleoperated mode.
+   */
   @Override
   public void teleopPeriodic() {
-    Scheduler.getInstance().run();
+    leftStick = l_stick.getRawAxis(Joystick.AxisType.kY.value)*0.75;
+    rightStick = r_stick.getRawAxis(Joystick.AxisType.kY.value)*0.75;
+    turretStick = gamePad.getX(Hand.kLeft)*-1;
+
+    boolean zeroDrive = gamePad.getRawButton(6);
+    SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
+    if (zeroDrive) {
+      turretTalon.setSelectedSensorPosition(0);
+      turretDistance = 0.0;
+      m_robotDrive.tankDrive(0.0, 0.0);
+    } else {
+      m_robotDrive.tankDrive(leftStick, rightStick);
+    }
+
+    boolean zeroTurret = gamePad.getRawButton(5);
+    SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
+
+    boolean canZeroTurret = turretDistance < -500 || turretDistance > 500;
+    SmartDashboard.putBoolean("Can Zero Turret:", canZeroTurret);
+    if (zeroTurret) {
+      if (canZeroTurret) {
+        if (turretDistance > -500) {
+          turretTalon.set(ControlMode.PercentOutput, Math.abs(turretStick)*-1);
+        } else {
+          turretTalon.set(ControlMode.PercentOutput, Math.abs(turretStick));
+        }
+      }
+    } else {
+      turretTalon.set(ControlMode.PercentOutput, turretStick);
+    }
+
+    readTalonsAndShowValues();
   }
 
-  // This function is called periodically during test mode.
+   /**
+   * This function is called periodically during teleoperated mode.
+   */
+  @Override
+  public void disabledPeriodic() {
+    leftStick = l_stick.getRawAxis(Joystick.AxisType.kY.value);
+    rightStick = r_stick.getRawAxis(Joystick.AxisType.kY.value);
+    turretStick = gamePad.getY(Hand.kLeft);
+
+    readTalonsAndShowValues();
+}
+
+  /**
+   * This function is called periodically during test mode.
+   */
   @Override
   public void testPeriodic() {
   }
 
-  // Starts up all commands once
-  private void startCommands() {
-    if (!commandsStarted) {
-      m_DriveWithJoysticks.start();
-      // m_MoveElevator.start();
-      // m_RunWrist.start();
-      // For testing always have joysticks available
-      commandsStarted = /*true*/ false;
-    }
+  public void readTalonsAndShowValues() {
+    leftDistance = leftTalon.getSelectedSensorPosition(0);
+    rightDistance = rightTalon.getSelectedSensorPosition(0);
+    turretDistance = turretTalon.getSelectedSensorPosition(0);
+
+    leftVelocity = leftTalon.getSelectedSensorVelocity(0);
+    rightVelocity = rightTalon.getSelectedSensorVelocity(0);
+    turretVelocity = turretTalon.getSelectedSensorVelocity(0);
+
+    SmartDashboard.putNumber("left stick:", leftStick);
+    SmartDashboard.putNumber("right stick:", rightStick);
+    SmartDashboard.putNumber("turret stick:", turretStick);
+    SmartDashboard.putNumber("left distance:", leftDistance);
+    SmartDashboard.putNumber("left velocity:", leftVelocity);
+    SmartDashboard.putNumber("right distance:", rightDistance);
+    SmartDashboard.putNumber("right velocity:", rightVelocity);
+    SmartDashboard.putNumber("turret distance:", turretDistance);
+    SmartDashboard.putNumber("turret velocity:", turretVelocity);
   }
 }
