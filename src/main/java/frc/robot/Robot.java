@@ -11,14 +11,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Limelight.ledMode;
+import frc.robot.Limelight.camMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends TimedRobot {
+  private final boolean enableLimelight = false; // Turn on/off the limelight LED's
+
   private final WPI_TalonSRX leftTalon = new WPI_TalonSRX(7);
   private final WPI_TalonSRX rightTalon = new WPI_TalonSRX(8);
   private final WPI_TalonSRX turretTalon = new WPI_TalonSRX(10);
@@ -48,7 +50,7 @@ public class Robot extends TimedRobot {
   private double turretVelocity = 0.0;
   private double turretDistance = 0.0;
 
-  private NetworkTable limelight = null;
+  private Limelight limelight;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -56,10 +58,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // Disable the Limelight on start so people don't get blinded
-    limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    limelight.getEntry("ledMode").setNumber(1);
-
     // Flip the phase of the encoder for use with SRX motion magic, etc.
     // and set current position to 0.0;
     leftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
@@ -94,6 +92,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+    limelight = new Limelight();
+    if (!enableLimelight) {
+      // Disable the Limelight on start so people don't get blinded
+      limelight.setLedMode(ledMode.OFF);
+    }
   }
 
   /**
@@ -101,8 +104,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    leftStick = l_stick.getRawAxis(Joystick.AxisType.kY.value)*0.75;
-    rightStick = r_stick.getRawAxis(Joystick.AxisType.kY.value)*0.75;
+    leftStick = l_stick.getRawAxis(Joystick.AxisType.kY.value)*0.8;
+    rightStick = r_stick.getRawAxis(Joystick.AxisType.kY.value)*0.8;
     turretStick = gamePad.getX(Hand.kLeft)*-1;
 
     boolean zeroDrive = gamePad.getRawButton(6);
@@ -130,6 +133,37 @@ public class Robot extends TimedRobot {
       }
     } else {
       turretTalon.set(ControlMode.PercentOutput, turretStick);
+    }
+
+    if (gamePad.getBButton()) {
+      camMode cam = limelight.getCamMode();
+      if (cam == camMode.DRIVER) {
+        limelight.setCamMode(camMode.VISION);
+      } else {
+        limelight.setCamMode(camMode.DRIVER);
+      }
+    }
+
+    if (gamePad.getXButton()) {
+      ledMode led = limelight.getLedMode();
+      if (led == ledMode.PIPELINE) {
+        limelight.setLedMode(ledMode.BLINK);
+      } else if (led == ledMode.BLINK) {
+        limelight.setLedMode(ledMode.OFF);
+      } else if (led == ledMode.OFF) {
+        limelight.setLedMode(ledMode.ON);
+      } else {
+        limelight.setLedMode(ledMode.PIPELINE);
+      }
+    }
+
+    if (gamePad.getYButton()) {
+      ledMode led = limelight.getLedMode();
+      if (led == ledMode.OFF) {
+        limelight.setLedMode(ledMode.ON);
+      } else {
+        limelight.setLedMode(ledMode.OFF);
+      }
     }
 
     readTalonsAndShowValues();
