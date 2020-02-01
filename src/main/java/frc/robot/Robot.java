@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -17,8 +10,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Limelight.ledMode;
-import frc.robot.Limelight.camMode;
+import frc.robot.commands.TargetEntity;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Limelight.camMode;
+import frc.robot.subsystems.Limelight.ledMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -28,16 +23,18 @@ import frc.robot.Limelight.camMode;
  * directory.
  */
 public class Robot extends TimedRobot {
-  private final boolean enableLimelight = false; // Turn on/off the limelight LED's
+  private final camMode camModeStart = camMode.DRIVER;
+  private final ledMode ledModeStart = ledMode.OFF;
+  private final Limelight limelight = OI.limelight;
 
-  private final WPI_TalonSRX leftTalon = new WPI_TalonSRX(7);
-  private final WPI_TalonSRX rightTalon = new WPI_TalonSRX(8);
-  private final WPI_TalonSRX turretTalon = new WPI_TalonSRX(10);
+  private final WPI_TalonSRX leftTalon = OI.leftTalon;
+  private final WPI_TalonSRX rightTalon = OI.rightTalon;
+  private final WPI_TalonSRX turretTalon = OI.turretTalon;
 
-  private final DifferentialDrive m_robotDrive = new DifferentialDrive(leftTalon, rightTalon);
-  private final Joystick l_stick = new Joystick(0);
-  private final Joystick r_stick = new Joystick(1);
-  private final XboxController gamePad = new XboxController(2);
+  private final DifferentialDrive m_robotDrive = OI.driveTrain;
+  private final Joystick l_stick = OI.l_stick;
+  private final Joystick r_stick = OI.r_stick;
+  private final XboxController gamePad = OI.gamePad;
 
   private double leftStick = 0.0;
   private double rightStick = 0.0;
@@ -50,7 +47,9 @@ public class Robot extends TimedRobot {
   private double turretVelocity = 0.0;
   private double turretDistance = 0.0;
 
-  private Limelight limelight;
+  private boolean xPress = false;
+  private boolean yPress = false;
+  private boolean bPress = false;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -78,6 +77,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    limelight.setLedMode(ledMode.PIPELINE);
+    limelight.setCamMode(camMode.VISION);
+    (new TargetEntity()).execute();
   }
 
   /**
@@ -85,6 +87,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    m_robotDrive.tankDrive(0.0, 0.0);
   }
 
   /**
@@ -92,11 +95,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    limelight = new Limelight();
-    if (!enableLimelight) {
-      // Disable the Limelight on start so people don't get blinded
-      limelight.setLedMode(ledMode.OFF);
-    }
+    limelight.setCamMode(camModeStart);
+    limelight.setLedMode(ledModeStart);
   }
 
   /**
@@ -104,11 +104,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    leftStick = l_stick.getRawAxis(Joystick.AxisType.kY.value)*0.8;
-    rightStick = r_stick.getRawAxis(Joystick.AxisType.kY.value)*0.8;
+    leftStick = l_stick.getRawAxis(Joystick.AxisType.kY.value);
+    rightStick = r_stick.getRawAxis(Joystick.AxisType.kY.value);
     turretStick = gamePad.getX(Hand.kLeft)*-1;
+    
 
-    boolean zeroDrive = gamePad.getRawButton(6);
+    boolean zeroDrive = gamePad.getRawButton(6); //Right Button
     SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
     if (zeroDrive) {
       turretTalon.setSelectedSensorPosition(0);
@@ -118,7 +119,7 @@ public class Robot extends TimedRobot {
       m_robotDrive.tankDrive(leftStick, rightStick);
     }
 
-    boolean zeroTurret = gamePad.getRawButton(5);
+    boolean zeroTurret = gamePad.getRawButton(5); //Left Button
     SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
 
     boolean canZeroTurret = turretDistance < -500 || turretDistance > 500;
@@ -135,16 +136,21 @@ public class Robot extends TimedRobot {
       turretTalon.set(ControlMode.PercentOutput, turretStick);
     }
 
-    if (gamePad.getBButton()) {
+    if (gamePad.getRawButtonPressed(2) && !bPress) { //B
+      bPress = true;
       camMode cam = limelight.getCamMode();
       if (cam == camMode.DRIVER) {
         limelight.setCamMode(camMode.VISION);
       } else {
         limelight.setCamMode(camMode.DRIVER);
       }
+      System.out.println("camMode: "+limelight.getCamMode().name());
+    } else {
+      bPress = false;
     }
 
-    if (gamePad.getXButton()) {
+    if (gamePad.getRawButtonPressed(3) && !xPress) { //X
+      xPress = true;
       ledMode led = limelight.getLedMode();
       if (led == ledMode.PIPELINE) {
         limelight.setLedMode(ledMode.BLINK);
@@ -155,15 +161,22 @@ public class Robot extends TimedRobot {
       } else {
         limelight.setLedMode(ledMode.PIPELINE);
       }
+      System.out.println("ledMode: "+limelight.getLedMode().name());
+    } else {
+      xPress = false;
     }
 
-    if (gamePad.getYButton()) {
+    if (gamePad.getRawButtonPressed(4) && !yPress) { //Y
+      yPress = true;
       ledMode led = limelight.getLedMode();
       if (led == ledMode.OFF) {
         limelight.setLedMode(ledMode.ON);
       } else {
         limelight.setLedMode(ledMode.OFF);
       }
+      System.out.println("ledMode: "+limelight.getLedMode().name());
+    } else {
+      yPress = false;
     }
 
     readTalonsAndShowValues();
@@ -186,6 +199,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    readTalonsAndShowValues();
   }
 
   public void readTalonsAndShowValues() {
@@ -206,5 +220,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("right velocity:", rightVelocity);
     SmartDashboard.putNumber("turret distance:", turretDistance);
     SmartDashboard.putNumber("turret velocity:", turretVelocity);
+  }
+
+  @Override
+  public void disabledInit() {
+    limelight.setLedMode(ledMode.OFF);
+    limelight.setCamMode(camMode.DRIVER);
   }
 }
