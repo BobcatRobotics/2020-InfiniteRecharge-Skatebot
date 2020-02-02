@@ -8,7 +8,7 @@ import java.io.IOException;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class RioLogger {
-	private static String path =  File.separator + "home" + File.separator + "lvuser" + File.separator + "logs";
+	private static String path = File.separator + "home" + File.separator + "lvuser" + File.separator + "logs";
 	private static String filename = path + File.separator + "riolog.txt";
 	
 	static {
@@ -45,13 +45,13 @@ public class RioLogger {
 	// Log diagnostic statements --> RioLoggerThread
 	public static void debugLog (String line) {
 		RioLoggerThread.log(line);
-		// System.out.println("DEBUG - " + line);
+		//System.out.println("DEBUG - " + line);
 	}
 	
 	// Log Errors --> Driver Station, console
 	public static void errorLog (String line) {
 		DriverStation.reportError(line,false);
 		RioLogger.log(line);
-		// System.out.println("ERROR - " + line);
+		//System.out.println("ERROR - " + line);
 	}
 }

@@ -51,10 +51,6 @@ public class DriveTrain extends SubsystemBase {
 	public void drive(double leftSpeed, double rightSpeed) {
 		m_robotDrive.tankDrive(leftSpeed, rightSpeed);
 	}
-
-	public void stop() {
-		drive(0.0, 0.0);
-	}
     
     /** 
      * Updates distance, velocity, and stick values.

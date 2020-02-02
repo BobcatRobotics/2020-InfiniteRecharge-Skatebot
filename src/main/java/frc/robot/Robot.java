@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    driveTrain.stop();
+    driveTrain.drive(0.0, 0.0);
   }
 
   /**
@@ -81,14 +81,15 @@ public class Robot extends TimedRobot {
     if (zeroDrive) {
       // Defines the zero position of the turret
       turret.zeroDrive();
-      driveTrain.stop();
+      // Stops the driveTrain
+      driveTrain.drive(0.0, 0.0);
     } else {
       driveTrain.drive();
     }
 
     // Press the left button to zero the turret.
     // This makes it unwind the cables and spin back into the defined zero position.
-    boolean zeroTurret = gamePad.getRawButton(5); //Left Button
+    boolean zeroTurret = gamePad.getRawButton(5);
     //SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
     //SmartDashboard.putBoolean("Can Zero Turret:", canZeroTurret);
     if (zeroTurret && turret.canZeroTurret) {
@@ -153,6 +154,9 @@ public class Robot extends TimedRobot {
     showValuesOnSmartDashboard();
   }
 
+  /**
+   * This function shows all stick, velocity, and distance values on SmartDashboard.
+   */
   public void showValuesOnSmartDashboard() {
     driveTrain.showValuesOnSmartDashboard();
     turret.showValuesOnSmartDashboard();
