@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.lib.RioLogger;
 
 public class Limelight extends SubsystemBase {
@@ -55,25 +56,25 @@ public class Limelight extends SubsystemBase {
         return tTarget.getDouble(0.0) == 1.0;
      }
  
-     public double x() {
-         return tx.getDouble(0.0);
-      }
+    public double x() {
+        return tx.getDouble(0.0);
+    }
  
-      public double y() {
-         return ty.getDouble(0.0);
-      }
+    public double y() {
+        return ty.getDouble(0.0);
+    }
  
-      public double targetArea() {
-         return ta.getDouble(0.0);
-      }
+    public double targetArea() {
+        return ta.getDouble(0.0);
+    }
  
-      public double rightTarget() {
-         return ta1.getDouble(0.0);
-      }
+    public double rightTarget() {
+        return ta1.getDouble(0.0);
+    }
  
-      public double leftTarget() {
-         return ta0.getDouble(0.0);
-      }
+    public double leftTarget() {
+        return ta0.getDouble(0.0);
+    }
 
     public ledMode getLedMode() {
         double entry = (double) getLedModeEntry().getNumber(0);

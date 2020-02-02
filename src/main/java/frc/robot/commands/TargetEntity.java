@@ -78,7 +78,7 @@ public class TargetEntity implements Command {
 		double leftPwr = (driveCommand + steerCommand  + leftBias) * -1.0;
 		double rightPwr = (driveCommand - steerCommand + rightBias ) * -1.0;
 
-		OI.driveTrain.tankDrive(leftPwr, rightPwr);
+		OI.driveTrain.drive(leftPwr, rightPwr);
 		SmartDashboard.putBoolean("Limelight.TargetIdentified", hasValidTarget);
 		SmartDashboard.putNumber("LimeLight.RightPower", rightPwr);
 		SmartDashboard.putNumber("LimeLight.LeftPower", leftPwr);
@@ -110,7 +110,7 @@ public class TargetEntity implements Command {
 
 	@Override
 	public void end(boolean failed) {
-		OI.driveTrain.tankDrive(0.0, 0.0);
+		OI.driveTrain.drive(0.0, 0.0);
 		OI.limelight.setLedMode(ledMode.OFF);
 		RioLogger.log("TargetEntity command finished");
 		// OI.driveTrain.setCoastMode();
@@ -165,7 +165,7 @@ public class TargetEntity implements Command {
 		ledsON = false;
 		isTargeting = false;
 		// OI.driveTrain.setBrakeMode();
-		OI.driveTrain.tankDrive(0.0, 0.0);
+		OI.driveTrain.drive(0.0, 0.0);
 	}
 
 	class Log {
