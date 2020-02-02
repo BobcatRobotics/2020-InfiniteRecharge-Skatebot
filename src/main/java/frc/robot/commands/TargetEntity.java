@@ -6,20 +6,17 @@
 /*----------------------------------------------------------------------------*/
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 import frc.robot.lib.RioLoggerThread;
 import frc.robot.subsystems.Limelight.ledMode;
-import frc.robot.OI;
-// import frc.robot.subsystems.DriveTrain;
 
 public class TargetEntity implements Command {
 	private static double DESIRED_TARGET_AREA = 4.6; // Area of the target when the robot reaches the wall
@@ -78,7 +75,7 @@ public class TargetEntity implements Command {
 		double leftPwr = (driveCommand + steerCommand  + leftBias) * -1.0;
 		double rightPwr = (driveCommand - steerCommand + rightBias ) * -1.0;
 
-		OI.driveTrain.tankDrive(leftPwr, rightPwr);
+		OI.driveTrain.drive(leftPwr, rightPwr);
 		SmartDashboard.putBoolean("Limelight.TargetIdentified", hasValidTarget);
 		SmartDashboard.putNumber("LimeLight.RightPower", rightPwr);
 		SmartDashboard.putNumber("LimeLight.LeftPower", leftPwr);
@@ -110,7 +107,7 @@ public class TargetEntity implements Command {
 
 	@Override
 	public void end(boolean failed) {
-		OI.driveTrain.tankDrive(0.0, 0.0);
+		OI.driveTrain.drive(0.0, 0.0);
 		OI.limelight.setLedMode(ledMode.OFF);
 		RioLogger.log("TargetEntity command finished");
 		// OI.driveTrain.setCoastMode();
@@ -165,7 +162,7 @@ public class TargetEntity implements Command {
 		ledsON = false;
 		isTargeting = false;
 		// OI.driveTrain.setBrakeMode();
-		OI.driveTrain.tankDrive(0.0, 0.0);
+		OI.driveTrain.drive(0.0, 0.0);
 	}
 
 	class Log {

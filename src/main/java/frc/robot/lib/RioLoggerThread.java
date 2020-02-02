@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class RioLoggerThread {
 	public static RioLoggerThread instance = null;
 	private static Thread loggerThread;
-	private static String path =  "";
+	private static String path = "";
 	private static String logName = "thread.txt";
 	private static final String dateFmt = "yyyy-MM-dd_hh.mm.ss'.thread.txt'";
 
@@ -25,7 +25,7 @@ public class RioLoggerThread {
 	private static boolean isLogging = false;
 
 	static {
-		path =  File.separator + "home" + File.separator + "lvuser" + File.separator + "logs" + File.separator;
+		path = File.separator + "home" + File.separator + "lvuser" + File.separator + "logs" + File.separator;
 		logName = path + new SimpleDateFormat(dateFmt).format(new Date());
 		instance = new RioLoggerThread();
 		createLogDirectory();
@@ -78,7 +78,7 @@ public class RioLoggerThread {
 		isLogging = true;
 		do {
 			try {
-					Thread.sleep(logFrequency * 1000L); // sleep() in milliseconds
+				Thread.sleep(logFrequency * 1000L); // sleep() in milliseconds
 			} catch (InterruptedException e) {
 				// The thread can be interrupted by a request to write the logs
 				RioLogger.log("RioLoggerThread startLogging() interrupted. Processing logs.");
@@ -130,6 +130,7 @@ public class RioLoggerThread {
 
 	private static void writeLog(List<String> log) {
 		BufferedWriter outputStream;
+		
 		try {
 			// Open the file
 			outputStream = new BufferedWriter(new FileWriter(logName, true));

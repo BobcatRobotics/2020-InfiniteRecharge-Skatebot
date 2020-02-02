@@ -38,6 +38,8 @@ public class Limelight extends SubsystemBase {
     }
 
     public Limelight() {
+        // Initialize Limelight
+        RioLogger.log("Limelight() created.");
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
         try {
             tTarget = limelight.getEntry("tv");
@@ -53,30 +55,30 @@ public class Limelight extends SubsystemBase {
 
     public boolean hasTargets() {
         return tTarget.getDouble(0.0) == 1.0;
-     }
+    }
  
-     public double x() {
-         return tx.getDouble(0.0);
-      }
+    public double x() {
+        return tx.getDouble(0.0);
+    }
  
-      public double y() {
-         return ty.getDouble(0.0);
-      }
+    public double y() {
+        return ty.getDouble(0.0);
+    }
  
-      public double targetArea() {
-         return ta.getDouble(0.0);
-      }
+    public double targetArea() {
+        return ta.getDouble(0.0);
+    }
  
-      public double rightTarget() {
-         return ta1.getDouble(0.0);
-      }
+    public double rightTarget() {
+        return ta1.getDouble(0.0);
+    }
  
-      public double leftTarget() {
-         return ta0.getDouble(0.0);
-      }
+    public double leftTarget() {
+        return ta0.getDouble(0.0);
+    }
 
     public ledMode getLedMode() {
-        double entry = (double) getLedModeEntry().getNumber(0);
+        double entry = (double)getLedModeEntry().getNumber(0);
         if (entry == 0) {
             return ledMode.PIPELINE;
         } else if (entry == 1) {
@@ -87,7 +89,7 @@ public class Limelight extends SubsystemBase {
         return ledMode.ON;
     }
 
-    public NetworkTableEntry getLedModeEntry() {
+    private NetworkTableEntry getLedModeEntry() {
         return limelight.getEntry("ledMode");
     }
 
@@ -96,18 +98,61 @@ public class Limelight extends SubsystemBase {
     }
 
     public camMode getCamMode() {
-        double entry = (double) getCamModeEntry().getNumber(0);
+        double entry = (double)getCamModeEntry().getNumber(0);
         if (entry == 0) {
             return camMode.VISION;
         }
         return camMode.DRIVER;
     }
 
-    public NetworkTableEntry getCamModeEntry() {
+    private NetworkTableEntry getCamModeEntry() {
         return limelight.getEntry("camMode");
     }
 
     public void setCamMode(camMode mode) {
         getCamModeEntry().setNumber(mode.value);
+    }
+
+    /**
+     * Switches the camera mode from DRIVER to VISION and vice versa.
+     */
+    public void switchCamMode() {
+        camMode cam = getCamMode();
+        if (cam == camMode.DRIVER) {
+            setCamMode(camMode.VISION);
+        } else {
+            setCamMode(camMode.DRIVER);
+        }
+        System.out.println("camMode: " + getCamMode().name());
+    }
+
+    /**
+     * Switches the LED mode from PIPELINE to BLINK to OFF to ON.
+     */
+    public void switchLedMode() {
+        ledMode led = getLedMode();
+        if (led == ledMode.PIPELINE) {
+            setLedMode(ledMode.BLINK);
+        } else if (led == ledMode.BLINK) {
+            setLedMode(ledMode.OFF);
+        } else if (led == ledMode.OFF) {
+            setLedMode(ledMode.ON);
+        } else {
+            setLedMode(ledMode.PIPELINE);
+        }
+        System.out.println("ledMode: " + getLedMode().name());
+    }
+
+    /**
+     * Switches the LED mode to ON if it is in OFF mode, else switches mode to OFF.
+     */
+    public void switchLedModeOnOff() {
+        ledMode led = getLedMode();
+        if (led == ledMode.OFF) {
+            setLedMode(ledMode.ON);
+        } else {
+            setLedMode(ledMode.OFF);
+        }
+        System.out.println("ledMode: " + getLedMode().name());
     }
 }

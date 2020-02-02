@@ -1,19 +1,14 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.TargetEntity;
+import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
+import frc.robot.subsystems.Turret;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -27,25 +22,10 @@ public class Robot extends TimedRobot {
   private final ledMode ledModeStart = ledMode.OFF;
   private final Limelight limelight = OI.limelight;
 
-  private final WPI_TalonSRX leftTalon = OI.leftTalon;
-  private final WPI_TalonSRX rightTalon = OI.rightTalon;
-  private final WPI_TalonSRX turretTalon = OI.turretTalon;
+  private final DriveTrain driveTrain = OI.driveTrain;
+  private final Turret turret = OI.turret;
 
-  private final DifferentialDrive m_robotDrive = OI.driveTrain;
-  private final Joystick l_stick = OI.l_stick;
-  private final Joystick r_stick = OI.r_stick;
   private final XboxController gamePad = OI.gamePad;
-
-  private double leftStick = 0.0;
-  private double rightStick = 0.0;
-  private double leftVelocity = 0.0;
-  private double leftDistance = 0.0;
-  private double rightDistance = 0.0;
-  private double rightVelocity = 0.0;
-
-  private double turretStick = 0.0;
-  private double turretVelocity = 0.0;
-  private double turretDistance = 0.0;
 
   private boolean xPress = false;
   private boolean yPress = false;
@@ -57,19 +37,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // Flip the phase of the encoder for use with SRX motion magic, etc.
-    // and set current position to 0.0;
-    leftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
-    leftTalon.setSelectedSensorPosition(0,0,0);
-    leftTalon.setSensorPhase(true);
-
-    rightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
-    rightTalon.setSelectedSensorPosition(0,0,0);
-    rightTalon.setSensorPhase(false);
-
-    turretTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
-    turretTalon.setSelectedSensorPosition(0,0,0);
-    turretTalon.setSensorPhase(false);
   }
 
   /**
@@ -87,7 +54,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    m_robotDrive.tankDrive(0.0, 0.0);
+    driveTrain.drive(0.0, 0.0);
   }
 
   /**
@@ -104,82 +71,76 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    leftStick = l_stick.getRawAxis(Joystick.AxisType.kY.value);
-    rightStick = r_stick.getRawAxis(Joystick.AxisType.kY.value);
-    turretStick = gamePad.getX(Hand.kLeft)*-1;
+    driveTrain.updateAndShowValues();
+    turret.updateAndShowValues();
     
-
-    boolean zeroDrive = gamePad.getRawButton(6); //Right Button
+    // Press the right button to set the zero position of the turret.
+    // Also stops the drive train.
+    boolean zeroDrive = gamePad.getRawButton(6);
     SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
     if (zeroDrive) {
-      turretTalon.setSelectedSensorPosition(0);
-      turretDistance = 0.0;
-      m_robotDrive.tankDrive(0.0, 0.0);
+      // Defines the zero position of the turret
+      turret.zeroDrive();
+      // Stops the driveTrain
+      driveTrain.drive(0.0, 0.0);
     } else {
-      m_robotDrive.tankDrive(leftStick, rightStick);
+      driveTrain.drive();
     }
 
-    boolean zeroTurret = gamePad.getRawButton(5); //Left Button
+    // Press the left button to zero the turret.
+    // This makes it unwind the cables and spin back into the defined zero position.
+    boolean zeroTurret = gamePad.getRawButton(5);
     SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
-
-    boolean canZeroTurret = turretDistance < -500 || turretDistance > 500;
-    SmartDashboard.putBoolean("Can Zero Turret:", canZeroTurret);
-    if (zeroTurret) {
-      if (canZeroTurret) {
-        if (turretDistance > -500) {
-          turretTalon.set(ControlMode.PercentOutput, Math.abs(turretStick)*-1);
-        } else {
-          turretTalon.set(ControlMode.PercentOutput, Math.abs(turretStick));
-        }
-      }
+    SmartDashboard.putBoolean("Can Zero Turret:", turret.canZeroTurret);
+    if (zeroTurret && turret.canZeroTurret) {
+      // Checks if the turret is within 500 distance of the zero point
+      // If the turret is, it will not zero the turret
+      turret.zeroTurret();
     } else {
-      turretTalon.set(ControlMode.PercentOutput, turretStick);
+      turret.updateTalonSpeed();
     }
 
-    if (gamePad.getRawButtonPressed(2) && !bPress) { //B
+    // Press the B button to switch the camera mode of Limelight.
+    // This switches it from DRIVER mode to VISION mode and vice versa.
+    if (gamePad.getRawButtonPressed(2) && !bPress) {
       bPress = true;
-      camMode cam = limelight.getCamMode();
-      if (cam == camMode.DRIVER) {
-        limelight.setCamMode(camMode.VISION);
-      } else {
-        limelight.setCamMode(camMode.DRIVER);
-      }
-      System.out.println("camMode: "+limelight.getCamMode().name());
+      limelight.switchCamMode();
     } else {
       bPress = false;
     }
 
-    if (gamePad.getRawButtonPressed(3) && !xPress) { //X
+    // Press the X Button to switch the LED mode of Limelight.
+    // PIPELINE -> BLINK -> OFF -> ON
+    if (gamePad.getRawButtonPressed(3) && !xPress) {
       xPress = true;
-      ledMode led = limelight.getLedMode();
-      if (led == ledMode.PIPELINE) {
-        limelight.setLedMode(ledMode.BLINK);
-      } else if (led == ledMode.BLINK) {
-        limelight.setLedMode(ledMode.OFF);
-      } else if (led == ledMode.OFF) {
-        limelight.setLedMode(ledMode.ON);
-      } else {
-        limelight.setLedMode(ledMode.PIPELINE);
-      }
-      System.out.println("ledMode: "+limelight.getLedMode().name());
+      limelight.switchLedMode();
     } else {
       xPress = false;
     }
 
-    if (gamePad.getRawButtonPressed(4) && !yPress) { //Y
+    // Press the Y Button to switch the LED mode of Limelight from ON and OFF.
+    // If the LED is OFF it turns it ON, else it turns it OFF.
+    if (gamePad.getRawButtonPressed(4) && !yPress) {
       yPress = true;
-      ledMode led = limelight.getLedMode();
-      if (led == ledMode.OFF) {
-        limelight.setLedMode(ledMode.ON);
-      } else {
-        limelight.setLedMode(ledMode.OFF);
-      }
-      System.out.println("ledMode: "+limelight.getLedMode().name());
+      limelight.switchLedModeOnOff();
     } else {
       yPress = false;
     }
+  }
 
-    readTalonsAndShowValues();
+  /**
+   * This function is called periodically during test mode.
+   */
+  @Override
+  public void testPeriodic() {
+    driveTrain.updateAndShowValues();
+    turret.updateAndShowValues();
+  }
+
+  @Override
+  public void disabledInit() {
+    limelight.setLedMode(ledMode.OFF);
+    limelight.setCamMode(camMode.DRIVER);
   }
 
    /**
@@ -187,44 +148,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledPeriodic() {
-    leftStick = l_stick.getRawAxis(Joystick.AxisType.kY.value);
-    rightStick = r_stick.getRawAxis(Joystick.AxisType.kY.value);
-    turretStick = gamePad.getY(Hand.kLeft);
-
-    readTalonsAndShowValues();
-}
-
-  /**
-   * This function is called periodically during test mode.
-   */
-  @Override
-  public void testPeriodic() {
-    readTalonsAndShowValues();
-  }
-
-  public void readTalonsAndShowValues() {
-    leftDistance = leftTalon.getSelectedSensorPosition(0);
-    rightDistance = rightTalon.getSelectedSensorPosition(0);
-    turretDistance = turretTalon.getSelectedSensorPosition(0);
-
-    leftVelocity = leftTalon.getSelectedSensorVelocity(0);
-    rightVelocity = rightTalon.getSelectedSensorVelocity(0);
-    turretVelocity = turretTalon.getSelectedSensorVelocity(0);
-
-    SmartDashboard.putNumber("left stick:", leftStick);
-    SmartDashboard.putNumber("right stick:", rightStick);
-    SmartDashboard.putNumber("turret stick:", turretStick);
-    SmartDashboard.putNumber("left distance:", leftDistance);
-    SmartDashboard.putNumber("left velocity:", leftVelocity);
-    SmartDashboard.putNumber("right distance:", rightDistance);
-    SmartDashboard.putNumber("right velocity:", rightVelocity);
-    SmartDashboard.putNumber("turret distance:", turretDistance);
-    SmartDashboard.putNumber("turret velocity:", turretVelocity);
-  }
-
-  @Override
-  public void disabledInit() {
-    limelight.setLedMode(ledMode.OFF);
-    limelight.setCamMode(camMode.DRIVER);
+    driveTrain.updateAndShowValues();
+    turret.updateAndShowValues();
   }
 }
