@@ -38,6 +38,8 @@ public class Limelight extends SubsystemBase {
     }
 
     public Limelight() {
+        // Initialize Limelight
+        RioLogger.log("Limelight() created.");
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
         try {
             tTarget = limelight.getEntry("tv");
@@ -53,7 +55,7 @@ public class Limelight extends SubsystemBase {
 
     public boolean hasTargets() {
         return tTarget.getDouble(0.0) == 1.0;
-     }
+    }
  
     public double x() {
         return tx.getDouble(0.0);
