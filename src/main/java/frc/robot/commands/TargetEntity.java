@@ -6,20 +6,18 @@
 /*----------------------------------------------------------------------------*/
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.OI;
+// import frc.robot.subsystems.DriveTrain;
 import frc.robot.lib.RioLogger;
 import frc.robot.lib.RioLoggerThread;
 import frc.robot.subsystems.Limelight.ledMode;
-import frc.robot.OI;
-// import frc.robot.subsystems.DriveTrain;
 
 public class TargetEntity implements Command {
 	private static double DESIRED_TARGET_AREA = 4.6; // Area of the target when the robot reaches the wall

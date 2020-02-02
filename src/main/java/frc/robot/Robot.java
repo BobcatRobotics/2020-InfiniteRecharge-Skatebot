@@ -3,11 +3,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import frc.robot.commands.TargetEntity;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
+import frc.robot.subsystems.Turret;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -73,7 +74,9 @@ public class Robot extends TimedRobot {
     driveTrain.update();
     turret.update();
     
-    boolean zeroDrive = gamePad.getRawButton(6); //Right Button
+    // Press the right button to set the zero position of the turret.
+    // Also stops the drive train.
+    boolean zeroDrive = gamePad.getRawButton(6);
     SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
     if (zeroDrive) {
       // Defines the zero position of the turret
@@ -109,7 +112,7 @@ public class Robot extends TimedRobot {
     // PIPELINE -> BLINK -> OFF -> ON
     if (gamePad.getRawButtonPressed(3) && !xPress) {
       xPress = true;
-      limelight.switchLEDMode();
+      limelight.switchLedMode();
     } else {
       xPress = false;
     }
@@ -118,7 +121,7 @@ public class Robot extends TimedRobot {
     // If the LED is OFF it turns it ON, else it turns it OFF.
     if (gamePad.getRawButtonPressed(4) && !yPress) {
       yPress = true;
-      limelight.switchLEDModeOnOff();
+      limelight.switchLedModeOnOff();
     } else {
       yPress = false;
     }
@@ -151,14 +154,7 @@ public class Robot extends TimedRobot {
   }
 
   public void showValuesOnSmartDashboard() {
-    SmartDashboard.putNumber("left stick:", driveTrain.leftStick);
-    SmartDashboard.putNumber("right stick:", driveTrain.rightStick);
-    SmartDashboard.putNumber("turret stick:", turret.stick);
-    SmartDashboard.putNumber("left distance:", driveTrain.leftDistance);
-    SmartDashboard.putNumber("left velocity:", driveTrain.leftVelocity);
-    SmartDashboard.putNumber("right distance:", driveTrain.rightDistance);
-    SmartDashboard.putNumber("right velocity:", driveTrain.rightVelocity);
-    SmartDashboard.putNumber("turret distance:", turret.distance);
-    SmartDashboard.putNumber("turret velocity:", turret.velocity);
+    driveTrain.showValuesOnSmartDashboard();
+    turret.showValuesOnSmartDashboard();
   }
 }

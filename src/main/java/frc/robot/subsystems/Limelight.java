@@ -4,7 +4,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.lib.RioLogger;
 
 public class Limelight extends SubsystemBase {
@@ -112,6 +111,9 @@ public class Limelight extends SubsystemBase {
         getCamModeEntry().setNumber(mode.value);
     }
 
+    /**
+     * Switches the camera mode from DRIVER to VISION and vice versa.
+     */
     public void switchCamMode() {
         camMode cam = getCamMode();
         if (cam == camMode.DRIVER) {
@@ -122,7 +124,10 @@ public class Limelight extends SubsystemBase {
         System.out.println("camMode: " + getCamMode().name());
     }
 
-    public void switchLEDMode() {
+    /**
+     * Switches the LED mode from PIPELINE to BLINK to OFF to ON.
+     */
+    public void switchLedMode() {
         ledMode led = getLedMode();
         if (led == ledMode.PIPELINE) {
             setLedMode(ledMode.BLINK);
@@ -136,7 +141,10 @@ public class Limelight extends SubsystemBase {
         System.out.println("ledMode: " + getLedMode().name());
     }
 
-    public void switchLEDModeOnOff() {
+    /**
+     * Switches the LED mode to ON if it is in OFF mode, else switches mode to OFF.
+     */
+    public void switchLedModeOnOff() {
         ledMode led = getLedMode();
         if (led == ledMode.OFF) {
             setLedMode(ledMode.ON);
