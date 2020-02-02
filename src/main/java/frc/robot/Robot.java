@@ -71,8 +71,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    driveTrain.update();
-    turret.update();
+    driveTrain.updateAndShowValues();
+    turret.updateAndShowValues();
     
     // Press the right button to set the zero position of the turret.
     // Also stops the drive train.
@@ -90,14 +90,14 @@ public class Robot extends TimedRobot {
     // Press the left button to zero the turret.
     // This makes it unwind the cables and spin back into the defined zero position.
     boolean zeroTurret = gamePad.getRawButton(5);
-    //SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
-    //SmartDashboard.putBoolean("Can Zero Turret:", canZeroTurret);
+    SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
+    SmartDashboard.putBoolean("Can Zero Turret:", turret.canZeroTurret);
     if (zeroTurret && turret.canZeroTurret) {
       // Checks if the turret is within 500 distance of the zero point
       // If the turret is, it will not zero the turret
       turret.zeroTurret();
     } else {
-      turret.updateTalon();
+      turret.updateTalonSpeed();
     }
 
     // Press the B button to switch the camera mode of Limelight.
@@ -126,8 +126,6 @@ public class Robot extends TimedRobot {
     } else {
       yPress = false;
     }
-
-    showValuesOnSmartDashboard();
   }
 
   /**
@@ -135,7 +133,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    showValuesOnSmartDashboard();
+    driveTrain.updateAndShowValues();
+    turret.updateAndShowValues();
   }
 
   @Override
@@ -149,16 +148,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledPeriodic() {
-    driveTrain.update();
-    turret.update();
-    showValuesOnSmartDashboard();
-  }
-
-  /**
-   * This function shows all stick, velocity, and distance values on SmartDashboard.
-   */
-  public void showValuesOnSmartDashboard() {
-    driveTrain.showValuesOnSmartDashboard();
-    turret.showValuesOnSmartDashboard();
+    driveTrain.updateAndShowValues();
+    turret.updateAndShowValues();
   }
 }

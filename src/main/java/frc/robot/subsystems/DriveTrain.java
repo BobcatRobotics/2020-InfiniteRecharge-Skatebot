@@ -55,7 +55,7 @@ public class DriveTrain extends SubsystemBase {
     /** 
      * Updates distance, velocity, and stick values.
      */
-    public void update() {
+    public void updateAndShowValues() {
         leftDistance = leftTalon.getSelectedSensorPosition(0);
         rightDistance = rightTalon.getSelectedSensorPosition(0);
 
@@ -64,9 +64,7 @@ public class DriveTrain extends SubsystemBase {
     
         leftStick = OI.l_stick.getRawAxis(Joystick.AxisType.kY.value);
         rightStick = OI.r_stick.getRawAxis(Joystick.AxisType.kY.value);
-    }
 
-    public void showValuesOnSmartDashboard() {
         SmartDashboard.putNumber("left stick:", leftStick);
         SmartDashboard.putNumber("right stick:", rightStick);
         SmartDashboard.putNumber("left distance:", leftDistance);

@@ -56,22 +56,20 @@ public class Turret extends SubsystemBase {
     /** 
      * Updates the turret.stick, turret.distance, and turret.velocity values.
      */
-    public void update() {
+    public void updateAndShowValues() {
         stick = -(OI.gamePad.getX(Hand.kLeft));
         distance = talon.getSelectedSensorPosition(0);
         velocity = talon.getSelectedSensorVelocity(0);
+
+        SmartDashboard.putNumber("turret stick:", stick);
+        SmartDashboard.putNumber("turret distance:", distance);
+        SmartDashboard.putNumber("turret velocity:", velocity);
     }
 
     /** 
      * Sets the speed of the turret talon to the turret stick value.
      */
-    public void updateTalon() {
+    public void updateTalonSpeed() {
         talon.set(ControlMode.PercentOutput, stick);
-    }
-
-    public void showValuesOnSmartDashboard() {
-        SmartDashboard.putNumber("turret stick:", stick);
-        SmartDashboard.putNumber("turret distance:", distance);
-        SmartDashboard.putNumber("turret velocity:", velocity);
     }
 }

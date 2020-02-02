@@ -153,6 +153,6 @@ public class Limelight extends SubsystemBase {
         } else {
             setLedMode(ledMode.OFF);
         }
-        System.out.println("ledMode: "+ getLedMode().name());
+        System.out.println("ledMode: " + getLedMode().name());
     }
 }
