@@ -11,7 +11,6 @@ import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 
 public class DriveTrain extends SubsystemBase {
-	/** Inverts drive direction **/
 	private final WPI_TalonSRX leftTalon = OI.leftTalon;
     private final WPI_TalonSRX rightTalon = OI.rightTalon;
 
@@ -55,6 +54,7 @@ public class DriveTrain extends SubsystemBase {
 		drive(0.0, 0.0);
 	}
     
+    /** Updates distance, velocity, and stick values */
     public void update() {
         leftDistance = leftTalon.getSelectedSensorPosition(0);
         rightDistance = rightTalon.getSelectedSensorPosition(0);

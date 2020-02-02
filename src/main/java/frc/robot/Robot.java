@@ -76,58 +76,68 @@ public class Robot extends TimedRobot {
     boolean zeroDrive = gamePad.getRawButton(6); //Right Button
     SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
     if (zeroDrive) {
+      // Defines the zero position of the turret
       turret.zeroDrive();
       driveTrain.stop();
     } else {
       driveTrain.drive();
     }
 
-    turret.zeroTurret(); //Left Button to zero the turret
+    // Press the left button to zero the turret.
+    // This makes it unwind the cables and spin back into the defined zero position.
+    boolean zeroTurret = gamePad.getRawButton(5); //Left Button
+    //SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
+    //SmartDashboard.putBoolean("Can Zero Turret:", canZeroTurret);
+    if (zeroTurret && turret.canZeroTurret) {
+      // Checks if the turret is within 500 distance of the zero point
+      // If the turret is, it will not zero the turret
+      turret.zeroTurret();
+    } else {
+      turret.updateTalon();
+    }
 
-    if (gamePad.getRawButtonPressed(2) && !bPress) { //B
+    // Press the B button to switch the camera mode of Limelight.
+    // This switches it from DRIVER mode to VISION mode and vice versa.
+    if (gamePad.getRawButtonPressed(2) && !bPress) {
       bPress = true;
-      camMode cam = limelight.getCamMode();
-      if (cam == camMode.DRIVER) {
-        limelight.setCamMode(camMode.VISION);
-      } else {
-        limelight.setCamMode(camMode.DRIVER);
-      }
-      System.out.println("camMode: "+limelight.getCamMode().name());
+      limelight.switchCamMode();
     } else {
       bPress = false;
     }
 
-    if (gamePad.getRawButtonPressed(3) && !xPress) { //X
+    // Press the X Button to switch the LED mode of Limelight.
+    // PIPELINE -> BLINK -> OFF -> ON
+    if (gamePad.getRawButtonPressed(3) && !xPress) {
       xPress = true;
-      ledMode led = limelight.getLedMode();
-      if (led == ledMode.PIPELINE) {
-        limelight.setLedMode(ledMode.BLINK);
-      } else if (led == ledMode.BLINK) {
-        limelight.setLedMode(ledMode.OFF);
-      } else if (led == ledMode.OFF) {
-        limelight.setLedMode(ledMode.ON);
-      } else {
-        limelight.setLedMode(ledMode.PIPELINE);
-      }
-      System.out.println("ledMode: "+limelight.getLedMode().name());
+      limelight.switchLEDMode();
     } else {
       xPress = false;
     }
 
-    if (gamePad.getRawButtonPressed(4) && !yPress) { //Y
+    // Press the Y Button to switch the LED mode of Limelight from ON and OFF.
+    // If the LED is OFF it turns it ON, else it turns it OFF.
+    if (gamePad.getRawButtonPressed(4) && !yPress) {
       yPress = true;
-      ledMode led = limelight.getLedMode();
-      if (led == ledMode.OFF) {
-        limelight.setLedMode(ledMode.ON);
-      } else {
-        limelight.setLedMode(ledMode.OFF);
-      }
-      System.out.println("ledMode: "+limelight.getLedMode().name());
+      limelight.switchLEDModeOnOff();
     } else {
       yPress = false;
     }
 
-    readTalonsAndShowValues();
+    showValuesOnSmartDashboard();
+  }
+
+  /**
+   * This function is called periodically during test mode.
+   */
+  @Override
+  public void testPeriodic() {
+    showValuesOnSmartDashboard();
+  }
+
+  @Override
+  public void disabledInit() {
+    limelight.setLedMode(ledMode.OFF);
+    limelight.setCamMode(camMode.DRIVER);
   }
 
    /**
@@ -137,18 +147,10 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     driveTrain.update();
     turret.update();
-    readTalonsAndShowValues();
-}
-
-  /**
-   * This function is called periodically during test mode.
-   */
-  @Override
-  public void testPeriodic() {
-    readTalonsAndShowValues();
+    showValuesOnSmartDashboard();
   }
 
-  public void readTalonsAndShowValues() {
+  public void showValuesOnSmartDashboard() {
     SmartDashboard.putNumber("left stick:", driveTrain.leftStick);
     SmartDashboard.putNumber("right stick:", driveTrain.rightStick);
     SmartDashboard.putNumber("turret stick:", turret.stick);
@@ -158,11 +160,5 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("right velocity:", driveTrain.rightVelocity);
     SmartDashboard.putNumber("turret distance:", turret.distance);
     SmartDashboard.putNumber("turret velocity:", turret.velocity);
-  }
-
-  @Override
-  public void disabledInit() {
-    limelight.setLedMode(ledMode.OFF);
-    limelight.setCamMode(camMode.DRIVER);
   }
 }
