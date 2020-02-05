@@ -17,16 +17,9 @@ public class Turret extends SubsystemBase {
     private double velocity = 0.0;
     private double distance = 0.0;
 
-    /**
-     * Boolean value representing if the turret is in a position
-     * that can use the zeroTurret() method. It checks if it is within
-     * 500 distance of the zero position.
-     */
-    public boolean canZeroTurret = (distance < -500) || (distance > 500);
-
     public Turret() {
         // Initialize Turret
-        RioLogger.log("Turret() created.");
+        RioLogger.log("Turret() created");
 
         talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
         talon.setSelectedSensorPosition(0, 0, 0);
@@ -40,6 +33,15 @@ public class Turret extends SubsystemBase {
     public void zeroDrive() {
         talon.setSelectedSensorPosition(0);
         distance = 0.0;
+    }
+
+    /**
+     * Boolean value representing if the turret is in a position
+     * that can use the zeroTurret() method. It checks if it is within
+     * 500 distance of the zero position.
+     */
+    public boolean canZeroTurret() {
+        return (distance < -500) || (distance > 500);
     }
 
     /** 

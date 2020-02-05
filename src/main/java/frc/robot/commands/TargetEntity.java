@@ -1,9 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
 package frc.robot.commands;
 
 import java.util.HashSet;
@@ -14,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.OI;
+import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
 import frc.robot.lib.RioLoggerThread;
 import frc.robot.subsystems.Limelight.ledMode;
@@ -22,7 +17,7 @@ public class TargetEntity implements Command {
 	private static double DESIRED_TARGET_AREA = 4.6; // Area of the target when the robot reaches the wall
 	private static double DRIVE_K = 0.15; // 0.15 how hard to drive fwd toward the target
 	private static double STEER_K = 0.035; // 0.35 how hard to turn toward the target
-	private static double STEER_I = 0.01;
+	// private static double STEER_I = 0.01;
 	private static double X_OFFSET = 0.0; // 1.45 The number of degrees camera is off center
 
 	// The following fields are updated by the LimeLight Camera
@@ -31,8 +26,6 @@ public class TargetEntity implements Command {
 	private double steerCommand = 0.0;
 
 	// The following fields are updated by the state of the Command
-	private boolean ledsON = OI.limelight.getLedMode() == ledMode.PIPELINE;
-	private boolean isTargeting = false;
 	private Log log = new Log();
 
 	public TargetEntity() {
@@ -44,22 +37,21 @@ public class TargetEntity implements Command {
 	@Override
 	public void execute() {
 		// Turn on the LED's if they haven't been turned on before
-		if (!ledsON) {
+		if (OI.limelight.getLedMode() != ledMode.PIPELINE) {
 			OI.limelight.setLedMode(ledMode.PIPELINE);
-			ledsON = true;
 			RioLogger.log("TargetEntity.execute() ledMode: PIPELINE");
 		}
 
 		// Driving
 		Update_Limelight_Tracking();
-		double leftTarget = OI.limelight.leftTarget();
-		double rightTarget = OI.limelight.rightTarget();
+		OI.limelight.leftTarget();
+		OI.limelight.rightTarget();
 
 		// Determine left and right targets for more agressive steering
 		// double minLeftPwr = 0.06;
 		// double minRightPwr = 0.06; // -0.18
 
-		driveCommand = OI.l_stick.getRawAxis(Joystick.AxisType.kY.value) * -1.0;
+		driveCommand = OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value) * -1;
 
 		double steerCommandSign = Math.signum(steerCommand);
 		double minSteerCommand = 0.15;
@@ -87,7 +79,7 @@ public class TargetEntity implements Command {
 
 	@Override
 	public boolean isFinished() {
-		boolean stop = false;
+		// boolean stop = false;
 		// if (isTargeting) {
 		//     if (!hasValidTarget) {
 		//         stop = true;
@@ -96,21 +88,21 @@ public class TargetEntity implements Command {
 		//         stop = true;
 		//     }
 		// }
-		if (!OI.gamePad.getRawButton(1)) {
-			stop = true;
+		if (!OI.gamePad.getRawButton(RobotMap.padA)) {
+			return true;
 		}
+		return false;
 		// if((DESIRED_TARGET_AREA - OI.limelight.targetArea()) <= 0){
 		//     stop = true;
 		// }
-		return stop;
+		// return stop;
 	}
 
 	@Override
 	public void end(boolean failed) {
-		OI.driveTrain.drive(0.0, 0.0);
+		OI.driveTrain.stop();
 		OI.limelight.setLedMode(ledMode.OFF);
 		RioLogger.log("TargetEntity command finished");
-		// OI.driveTrain.setCoastMode();
 		initializeCommand();
 	}
 
@@ -129,7 +121,6 @@ public class TargetEntity implements Command {
 			steerCommand = 0.0;
 			return;
 		}
-		isTargeting = true;
 		// double ty = OI.limelight.y();
 		double tx = OI.limelight.x();
 		double ta = OI.limelight.targetArea();
@@ -159,10 +150,8 @@ public class TargetEntity implements Command {
 	}
 
 	private void initializeCommand() {
-		ledsON = false;
-		isTargeting = false;
 		// OI.driveTrain.setBrakeMode();
-		OI.driveTrain.drive(0.0, 0.0);
+		OI.driveTrain.stop();
 	}
 
 	class Log {

@@ -10,13 +10,6 @@ import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
 import frc.robot.subsystems.Turret;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
 public class Robot extends TimedRobot {
   private final camMode camModeStart = camMode.DRIVER;
   private final ledMode ledModeStart = ledMode.OFF;
@@ -54,7 +47,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    driveTrain.drive(0.0, 0.0);
+    driveTrain.stop();
   }
 
   /**
@@ -76,23 +69,22 @@ public class Robot extends TimedRobot {
     
     // Press the right button to set the zero position of the turret.
     // Also stops the drive train.
-    boolean zeroDrive = gamePad.getRawButton(6);
+    boolean zeroDrive = gamePad.getRawButton(RobotMap.zeroDrive);
     SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
     if (zeroDrive) {
       // Defines the zero position of the turret
       turret.zeroDrive();
-      // Stops the driveTrain
-      driveTrain.drive(0.0, 0.0);
+      driveTrain.stop();
     } else {
       driveTrain.drive();
     }
 
     // Press the left button to zero the turret.
     // This makes it unwind the cables and spin back into the defined zero position.
-    boolean zeroTurret = gamePad.getRawButton(5);
+    boolean zeroTurret = gamePad.getRawButton(RobotMap.zeroTurret);
     SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
-    SmartDashboard.putBoolean("Can Zero Turret:", turret.canZeroTurret);
-    if (zeroTurret && turret.canZeroTurret) {
+    SmartDashboard.putBoolean("Can Zero Turret:", turret.canZeroTurret());
+    if (zeroTurret && turret.canZeroTurret()) {
       // Checks if the turret is within 500 distance of the zero point
       // If the turret is, it will not zero the turret
       turret.zeroTurret();
@@ -102,7 +94,7 @@ public class Robot extends TimedRobot {
 
     // Press the B button to switch the camera mode of Limelight.
     // This switches it from DRIVER mode to VISION mode and vice versa.
-    if (gamePad.getRawButtonPressed(2) && !bPress) {
+    if (gamePad.getRawButtonPressed(RobotMap.padB) && !bPress) {
       bPress = true;
       limelight.switchCamMode();
     } else {
@@ -111,7 +103,7 @@ public class Robot extends TimedRobot {
 
     // Press the X Button to switch the LED mode of Limelight.
     // PIPELINE -> BLINK -> OFF -> ON
-    if (gamePad.getRawButtonPressed(3) && !xPress) {
+    if (gamePad.getRawButtonPressed(RobotMap.padX) && !xPress) {
       xPress = true;
       limelight.switchLedMode();
     } else {
@@ -119,8 +111,8 @@ public class Robot extends TimedRobot {
     }
 
     // Press the Y Button to switch the LED mode of Limelight from ON and OFF.
-    // If the LED is OFF it turns it ON, else it turns it OFF.
-    if (gamePad.getRawButtonPressed(4) && !yPress) {
+    // Old value -> Off -> On
+    if (gamePad.getRawButtonPressed(RobotMap.padY) && !yPress) {
       yPress = true;
       limelight.switchLedModeOnOff();
     } else {

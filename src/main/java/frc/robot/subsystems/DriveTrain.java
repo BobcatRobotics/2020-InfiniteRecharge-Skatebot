@@ -14,7 +14,7 @@ public class DriveTrain extends SubsystemBase {
 	private final WPI_TalonSRX leftTalon = OI.leftTalon;
     private final WPI_TalonSRX rightTalon = OI.rightTalon;
 
-    private final DifferentialDrive m_robotDrive = OI.differentialDrive;
+    private final DifferentialDrive diffDrive = OI.differentialDrive;
 
     private double leftStick = 0.0;
     private double rightStick = 0.0;
@@ -42,15 +42,22 @@ public class DriveTrain extends SubsystemBase {
      * Drive with default values (leftStick, rightStick).
      */
     public void drive() {
-        m_robotDrive.tankDrive(leftStick, rightStick);
+        diffDrive.tankDrive(leftStick, rightStick);
     }
 
     /**
      * Drive with custom values.
      */
 	public void drive(double leftSpeed, double rightSpeed) {
-		m_robotDrive.tankDrive(leftSpeed, rightSpeed);
-	}
+		diffDrive.tankDrive(leftSpeed, rightSpeed);
+    }
+    
+    /**
+     * Stop the robot from driving
+     */
+    public void stop() {
+        drive(0.0, 0.0);
+    }
     
     /** 
      * Updates distance, velocity, and stick values.
@@ -62,8 +69,8 @@ public class DriveTrain extends SubsystemBase {
         leftVelocity = leftTalon.getSelectedSensorVelocity(0);
         rightVelocity = rightTalon.getSelectedSensorVelocity(0);
     
-        leftStick = OI.l_stick.getRawAxis(Joystick.AxisType.kY.value);
-        rightStick = OI.r_stick.getRawAxis(Joystick.AxisType.kY.value);
+        leftStick = OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value);
+        rightStick = OI.rightJoystick.getRawAxis(Joystick.AxisType.kY.value);
 
         SmartDashboard.putNumber("left stick:", leftStick);
         SmartDashboard.putNumber("right stick:", rightStick);

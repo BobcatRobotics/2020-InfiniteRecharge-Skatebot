@@ -99,7 +99,6 @@ public class RioLoggerThread {
 	}
 	
 	public static void log(String line) {
-		// TODO:: Check if FPGA can convert to realtime
 		logs.add(line);
 	}
 
