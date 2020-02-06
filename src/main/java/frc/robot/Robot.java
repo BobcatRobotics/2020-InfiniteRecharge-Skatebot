@@ -37,9 +37,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    limelight.setLedMode(ledMode.PIPELINE);
-    limelight.setCamMode(camMode.VISION);
-    (new TargetEntity()).execute();
+    driveTrain.stop();
   }
 
   /**
@@ -47,7 +45,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    driveTrain.stop();
+    (new TargetEntity()).schedule(true);
   }
 
   /**

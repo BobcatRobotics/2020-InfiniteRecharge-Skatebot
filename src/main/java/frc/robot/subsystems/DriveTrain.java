@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -29,11 +28,11 @@ public class DriveTrain extends SubsystemBase {
 		// Initialize Drive Train
         RioLogger.log("DriveTrain() created.");
 
-        leftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
+        leftTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
         leftTalon.setSelectedSensorPosition(0, 0, 0);
-        leftTalon.setSensorPhase(true);
+        leftTalon.setSensorPhase(true); 
 
-        rightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,0,0);
+        rightTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
         rightTalon.setSelectedSensorPosition(0, 0, 0);
         rightTalon.setSensorPhase(false);
     }

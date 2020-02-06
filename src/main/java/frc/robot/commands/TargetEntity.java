@@ -11,6 +11,7 @@ import frc.robot.OI;
 import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
 import frc.robot.lib.RioLoggerThread;
+import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
 
 public class TargetEntity implements Command {
@@ -39,7 +40,9 @@ public class TargetEntity implements Command {
 		// Turn on the LED's if they haven't been turned on before
 		if (OI.limelight.getLedMode() != ledMode.PIPELINE) {
 			OI.limelight.setLedMode(ledMode.PIPELINE);
-			RioLogger.log("TargetEntity.execute() ledMode: PIPELINE");
+		}
+		if (OI.limelight.getCamMode() != camMode.VISION) {
+			OI.limelight.setCamMode(camMode.VISION);
 		}
 
 		// Driving
