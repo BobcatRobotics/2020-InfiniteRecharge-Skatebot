@@ -47,8 +47,6 @@ public class TargetEntity implements Command {
 
 		// Driving
 		Update_Limelight_Tracking();
-		OI.limelight.leftTarget();
-		OI.limelight.rightTarget();
 
 		// Determine left and right targets for more agressive steering
 		// double minLeftPwr = 0.06;
@@ -91,7 +89,7 @@ public class TargetEntity implements Command {
 		//         stop = true;
 		//     }
 		// }
-		if (!OI.gamePad.getRawButton(RobotMap.padA)) {
+		if (OI.gamePad.getRawButtonPressed(RobotMap.padA)) {
 			return true;
 		}
 		return false;
@@ -106,6 +104,9 @@ public class TargetEntity implements Command {
 		OI.driveTrain.stop();
 		OI.limelight.setLedMode(ledMode.OFF);
 		RioLogger.log("TargetEntity command finished");
+		if (failed) {
+			RioLogger.log("TargetEntity command was interupted");
+		}
 		initializeCommand();
 	}
 
