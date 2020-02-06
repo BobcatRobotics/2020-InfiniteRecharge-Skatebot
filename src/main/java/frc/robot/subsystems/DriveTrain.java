@@ -18,6 +18,9 @@ public class DriveTrain extends SubsystemBase {
     private double leftStick = 0.0;
     private double rightStick = 0.0;
 
+    private double right = 0.0;
+    private double left = 0.0;
+
     private double leftVelocity = 0.0;
     private double rightVelocity = 0.0;
 
@@ -48,7 +51,29 @@ public class DriveTrain extends SubsystemBase {
      * Drive with custom values.
      */
 	public void drive(double leftSpeed, double rightSpeed) {
-		diffDrive.tankDrive(leftSpeed, rightSpeed);
+        
+        setRightPower(rightSpeed);
+        setLeftPower(leftSpeed);
+
+        diffDrive.tankDrive(left, right);
+    }
+
+    public void setRightPower(double rightSpeed) {
+
+        if (rightSpeed < 0) {
+            right = -1.0 * (Math.sqrt(-1.0 * rightSpeed));
+        } else {
+            right = Math.sqrt(rightSpeed);
+        }
+    }
+
+    public void setLeftPower(double leftSpeed) {
+
+        if (leftSpeed < 0) {
+            left = -1.0 * (Math.sqrt(-1.0 * leftSpeed));
+        } else {
+            left = Math.sqrt(leftSpeed);
+        }
     }
     
     /**
