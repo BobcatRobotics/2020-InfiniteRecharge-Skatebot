@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
     
     // Press the right button to set the zero position of the turret.
     // Also stops the drive train.
-    boolean zeroDrive = gamePad.getRawButton(RobotMap.zeroDrive);
+    boolean zeroDrive = gamePad.getRawButton(RobotMap.rightButton);
     SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
     if (zeroDrive) {
       // Defines the zero position of the turret
@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
 
     // Press the left button to zero the turret.
     // This makes it unwind the cables and spin back into the defined zero position.
-    boolean zeroTurret = gamePad.getRawButton(RobotMap.zeroTurret);
+    boolean zeroTurret = gamePad.getRawButton(RobotMap.leftButton);
     SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
     SmartDashboard.putBoolean("Can Zero Turret:", turret.canZeroTurret());
     if (zeroTurret && turret.canZeroTurret()) {

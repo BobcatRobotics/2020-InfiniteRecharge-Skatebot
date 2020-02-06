@@ -54,7 +54,7 @@ public class TargetEntity implements Command {
 		// double minLeftPwr = 0.06;
 		// double minRightPwr = 0.06; // -0.18
 
-		driveCommand = OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value) * -1;
+		driveCommand = -(OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value));
 
 		double steerCommandSign = Math.signum(steerCommand);
 		double minSteerCommand = 0.15;
@@ -67,8 +67,8 @@ public class TargetEntity implements Command {
 		double leftBias = driveSign * 0.00;
 		double rightBias = driveSign * 0.05;
 
-		double leftPwr = (driveCommand + steerCommand  + leftBias) * -1.0;
-		double rightPwr = (driveCommand - steerCommand + rightBias ) * -1.0;
+		double leftPwr = -(driveCommand + steerCommand  + leftBias);
+		double rightPwr = -(driveCommand - steerCommand + rightBias);
 
 		OI.driveTrain.drive(leftPwr, rightPwr);
 		SmartDashboard.putBoolean("Limelight.TargetIdentified", hasValidTarget);
