@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.TargetEntity;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
@@ -24,6 +25,8 @@ public class Robot extends TimedRobot {
   private boolean yPress = false;
   private boolean bPress = false;
 
+  private TargetEntity targetEntity = new TargetEntity();
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -33,11 +36,25 @@ public class Robot extends TimedRobot {
   }
 
   /**
+   * This function is called every robot packet, no matter the mode. Use this for items like
+   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before
+   * LiveWindow and SmartDashboard integrated updating.
+   */
+  @Override
+  public void robotPeriodic() {
+  }
+
+  /**
    * This function is run once each time the robot enters autonomous mode.
    */
   @Override
   public void autonomousInit() {
     driveTrain.stop();
+    if (!CommandScheduler.getInstance().isScheduled(targetEntity)) {
+      targetEntity.schedule();
+    }
   }
 
   /**
@@ -45,7 +62,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    (new TargetEntity()).schedule(true);
+    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // block in order for anything in the Command-based framework to work.
+    CommandScheduler.getInstance().run();
   }
 
   /**

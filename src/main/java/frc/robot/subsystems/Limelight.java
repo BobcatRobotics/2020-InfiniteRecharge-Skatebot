@@ -95,7 +95,7 @@ public class Limelight extends SubsystemBase {
 
     public void setLedMode(ledMode mode) {
         getLedModeEntry().setNumber(mode.value);
-        RioLogger.log("Led mode: "+mode.value);
+        RioLogger.log("Led mode: " + mode.value);
     }
 
     public camMode getCamMode() {
@@ -112,7 +112,7 @@ public class Limelight extends SubsystemBase {
 
     public void setCamMode(camMode mode) {
         getCamModeEntry().setNumber(mode.value);
-        RioLogger.log("Cam mode: "+mode.value);
+        RioLogger.log("Cam mode: " + mode.value);
     }
 
     /**
