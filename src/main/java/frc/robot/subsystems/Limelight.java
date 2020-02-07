@@ -16,22 +16,20 @@ public class Limelight extends SubsystemBase {
     private NetworkTableEntry ta1;
 
     public enum ledMode {
-        PIPELINE(0),
-        OFF(1),
-        BLINK(2),
-        ON(3);
+        PIPELINE(0), OFF(1), BLINK(2), ON(3);
 
         private double value;
+
         private ledMode(double value) {
             this.value = value;
         }
     }
 
     public enum camMode {
-        VISION(0),
-        DRIVER(1);
+        VISION(0), DRIVER(1);
 
         private double value;
+
         private camMode(double value) {
             this.value = value;
         }
@@ -39,7 +37,6 @@ public class Limelight extends SubsystemBase {
 
     public Limelight() {
         // Initialize Limelight
-        RioLogger.log("Limelight() created.");
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
         try {
             tTarget = limelight.getEntry("tv");
@@ -51,34 +48,35 @@ public class Limelight extends SubsystemBase {
         } catch (Exception e) {
             RioLogger.errorLog("Unable to initialize LimeLight. Error is " + e);
         }
+        RioLogger.log("Limelight initialized");
     }
 
     public boolean hasTargets() {
         return tTarget.getDouble(0.0) == 1.0;
     }
- 
+
     public double x() {
         return tx.getDouble(0.0);
     }
- 
+
     public double y() {
         return ty.getDouble(0.0);
     }
- 
+
     public double targetArea() {
         return ta.getDouble(0.0);
     }
- 
+
     public double rightTarget() {
         return ta1.getDouble(0.0);
     }
- 
+
     public double leftTarget() {
         return ta0.getDouble(0.0);
     }
 
     public ledMode getLedMode() {
-        double entry = (double)getLedModeEntry().getNumber(0);
+        double entry = (double) getLedModeEntry().getNumber(0);
         if (entry == 0) {
             return ledMode.PIPELINE;
         } else if (entry == 1) {
@@ -99,7 +97,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public camMode getCamMode() {
-        double entry = (double)getCamModeEntry().getNumber(0);
+        double entry = (double) getCamModeEntry().getNumber(0);
         if (entry == 0) {
             return camMode.VISION;
         }

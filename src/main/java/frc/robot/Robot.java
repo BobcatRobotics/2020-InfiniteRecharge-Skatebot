@@ -6,93 +6,71 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.TargetEntity;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
 import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
+  // The mode that Limelight's camera will start in
   private final camMode camModeStart = camMode.DRIVER;
+
+  // The mode that Limelight's LED's will start in
   private final ledMode ledModeStart = ledMode.OFF;
-  private final Limelight limelight = OI.limelight;
+
+  private static final CommandScheduler schedule = CommandScheduler.getInstance();
 
   private final DriveTrain driveTrain = OI.driveTrain;
   private final Turret turret = OI.turret;
 
   private final XboxController gamePad = OI.gamePad;
 
-  private boolean xPress = false;
-  private boolean yPress = false;
-  private boolean bPress = false;
+  private boolean xPress;
+  private boolean yPress;
+  private boolean bPress;
 
-  private TargetEntity targetEntity = new TargetEntity();
+  private TargetEntity targetEntity;
 
-  private static final CommandScheduler schedule = CommandScheduler.getInstance();
-
-  /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
-   */
   @Override
   public void robotInit() {
-    
+    xPress = false;
+    yPress = false;
+    bPress = false;
   }
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
-   */
   @Override
   public void robotPeriodic() {
-    
+
   }
 
-  /**
-   * This function is run once each time the robot enters autonomous mode.
-   */
   @Override
   public void autonomousInit() {
     driveTrain.stop();
+    targetEntity = new TargetEntity();
     if (!schedule.isScheduled(targetEntity)) {
       targetEntity.schedule();
     }
   }
 
-  /**
-   * This function is called periodically during autonomous.
-   */
   @Override
   public void autonomousPeriodic() {
-    // targetEntity.schedule();
+    if (!schedule.isScheduled(targetEntity) && OI.gamePad.getRawButtonPressed(RobotMap.padY)) {
+      targetEntity.schedule();
+    }
+
     schedule.run();
-    
-    //if (!schedule.isScheduled(targetEntity) && OI.gamePad.getRawButtonPressed(RobotMap.padY)) {
-      //targetEntity.schedule();
-    //} else if (schedule.isScheduled(targetEntity)) {
-      //schedule.run();
-    // }
   }
 
-  /**
-   * This function is called once each time the robot enters teleoperated mode.
-   */
   @Override
   public void teleopInit() {
-    limelight.setCamMode(camModeStart);
-    limelight.setLedMode(ledModeStart);
+    OI.limelight.setCamMode(camModeStart);
+    OI.limelight.setLedMode(ledModeStart);
   }
 
-  /**
-   * This function is called periodically during teleoperated mode.
-   */
   @Override
   public void teleopPeriodic() {
     driveTrain.updateAndShowValues();
     turret.updateAndShowValues();
-    
+
     // Press the right button to set the zero position of the turret.
     // Also stops the drive train.
     boolean zeroDrive = gamePad.getRawButton(RobotMap.rightButton);
@@ -107,11 +85,9 @@ public class Robot extends TimedRobot {
 
     // Press the left button to zero the turret.
     // This makes it unwind the cables and spin back into the defined zero position.
-    boolean zeroTurret = gamePad.getRawButton(RobotMap.leftButton);
-    SmartDashboard.putBoolean("Zero Turret:", zeroTurret);
     SmartDashboard.putBoolean("Can Zero Turret:", turret.canZeroTurret());
-    if (zeroTurret && turret.canZeroTurret()) {
-      // Checks if the turret is within 500 distance of the zero point
+    if (gamePad.getRawButton(RobotMap.leftButton) && turret.canZeroTurret()) {
+      // Checks if the turret is within 250 distance of the zero point
       // If the turret is, it will not zero the turret
       turret.zeroTurret();
     } else {
@@ -119,10 +95,10 @@ public class Robot extends TimedRobot {
     }
 
     // Press the B button to switch the camera mode of Limelight.
-    // This switches it from DRIVER mode to VISION mode and vice versa.
+    // DRIVER -> VISION
     if (gamePad.getRawButtonPressed(RobotMap.padB) && !bPress) {
       bPress = true;
-      limelight.switchCamMode();
+      OI.limelight.switchCamMode();
     } else {
       bPress = false;
     }
@@ -131,7 +107,7 @@ public class Robot extends TimedRobot {
     // PIPELINE -> BLINK -> OFF -> ON
     if (gamePad.getRawButtonPressed(RobotMap.padX) && !xPress) {
       xPress = true;
-      limelight.switchLedMode();
+      OI.limelight.switchLedMode();
     } else {
       xPress = false;
     }
@@ -140,15 +116,20 @@ public class Robot extends TimedRobot {
     // Old value -> Off -> On
     if (gamePad.getRawButtonPressed(RobotMap.padY) && !yPress) {
       yPress = true;
-      limelight.switchLedModeOnOff();
+      OI.limelight.switchLedModeOnOff();
     } else {
       yPress = false;
     }
   }
 
-  /**
-   * This function is called periodically during test mode.
-   */
+  @Override
+  public void disabledInit() {
+    xPress = false;
+    yPress = false;
+    bPress = false;
+    OI.limelight.setLedMode(ledMode.OFF);
+  }
+
   @Override
   public void testPeriodic() {
     driveTrain.updateAndShowValues();
@@ -156,17 +137,6 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {
-    limelight.setLedMode(ledMode.OFF);
-    limelight.setCamMode(camMode.DRIVER);
-  }
-
-   /**
-   * This function is called periodically during teleoperated mode.
-   */
-  @Override
   public void disabledPeriodic() {
-    driveTrain.updateAndShowValues();
-    turret.updateAndShowValues();
   }
 }

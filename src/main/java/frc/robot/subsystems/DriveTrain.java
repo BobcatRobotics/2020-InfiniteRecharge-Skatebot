@@ -44,8 +44,6 @@ public class DriveTrain extends SubsystemBase {
      * Drive with default values (leftStick, rightStick).
      */
     public void drive() {
-        //diffDrive.tankDrive(leftStick, rightStick);
-
         drive(leftStick, rightStick);
     }
 
@@ -53,7 +51,6 @@ public class DriveTrain extends SubsystemBase {
      * Drive with custom values.
      */
     public void drive(double leftSpeed, double rightSpeed) {
-
         if (sqrt) {
             setSQRTRightPower(rightSpeed);
             setSQRTLeftPower(leftSpeed);
@@ -61,13 +58,12 @@ public class DriveTrain extends SubsystemBase {
             right = rightSpeed;
             left = leftSpeed;
         }
-        
+
         rightTalon.set(right);
         leftTalon.set(left);
     }
 
     public void setSQRTRightPower(double rightSpeed) {
-
         if (rightSpeed < 0) {
             right = -1.0 * (Math.sqrt(-1.0 * rightSpeed));
         } else {
@@ -76,7 +72,6 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void setSQRTLeftPower(double leftSpeed) {
-
         if (leftSpeed < 0) {
             left = -1.0 * (Math.sqrt(-1.0 * leftSpeed));
         } else {
@@ -85,7 +80,6 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void toggleSqrt() {
-
         sqrt = !sqrt;
     }
 
