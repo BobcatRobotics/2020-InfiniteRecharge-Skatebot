@@ -49,9 +49,9 @@ public class Turret extends SubsystemBase {
      */
     public void zeroTurret() {
         if (distance > -500) {
-            talon.set(ControlMode.PercentOutput, -(Math.abs(stick)));
+            talon.set(ControlMode.PercentOutput, -(Math.abs(stick)*0.5));
         } else {
-            talon.set(ControlMode.PercentOutput, Math.abs(stick));
+            talon.set(ControlMode.PercentOutput, Math.abs(stick)*0.5);
         }
     }
 
@@ -72,6 +72,13 @@ public class Turret extends SubsystemBase {
      * Sets the speed of the turret talon to the turret stick value.
      */
     public void updateTalonSpeed() {
-        talon.set(ControlMode.PercentOutput, stick);
+        talon.set(ControlMode.PercentOutput, stick*0.5);
+    }
+
+    /**
+     * Sets the speed for the turret to a custom value
+     */
+    public void setTurretSpeed(double value) {
+        talon.set(ControlMode.PercentOutput, value);
     }
 }

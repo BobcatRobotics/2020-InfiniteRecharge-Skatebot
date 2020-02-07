@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    driveTrain.drive();
     if (!CommandScheduler.getInstance().isScheduled(targetEntity) && OI.gamePad.getRawButtonPressed(RobotMap.padY)) {
       targetEntity.schedule();
 			CommandScheduler.getInstance().run();

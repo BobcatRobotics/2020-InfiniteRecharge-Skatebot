@@ -51,7 +51,6 @@ public class DriveTrain extends SubsystemBase {
      * Drive with custom values.
      */
 	public void drive(double leftSpeed, double rightSpeed) {
-        
         setRightPower(rightSpeed);
         setLeftPower(leftSpeed);
 
