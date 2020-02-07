@@ -6,6 +6,7 @@ import java.util.Set;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.OI;
 import frc.robot.RobotMap;
@@ -14,7 +15,7 @@ import frc.robot.lib.RioLoggerThread;
 import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
 
-public class TargetEntity implements Command {
+public class TargetEntity extends CommandBase {
 	private static double DESIRED_TARGET_AREA = 4.6; // Area of the target when the robot reaches the wall
 	private static double DRIVE_K = 0.15; // 0.15 how hard to drive fwd toward the target
 	private static double STEER_K = 0.035; // 0.35 how hard to turn toward the target
