@@ -36,12 +36,9 @@ public class TargetEntity extends CommandBase {
 	public void execute() {
 		// Turn on the LED's if they haven't been turned on before
 		OI.limelight.setLedMode(ledMode.ON);
-		
 
-		// Turn on driver mode if it wasn't turned on before
-		if (OI.limelight.getCamMode() != camMode.VISION) {
-			OI.limelight.setCamMode(camMode.VISION);
-		}
+		// Turn on vision mode if it wasn't turned on before
+		OI.limelight.setCamMode(camMode.VISION);
 
 		// Driving
 		Update_Limelight_Tracking();
