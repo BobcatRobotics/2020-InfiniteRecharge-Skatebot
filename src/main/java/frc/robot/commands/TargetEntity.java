@@ -5,7 +5,6 @@ import java.util.Set;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.OI;
@@ -19,7 +18,6 @@ public class TargetEntity extends CommandBase {
 	private static double DESIRED_TARGET_AREA = 4.6; // Area of the target when the robot reaches the wall
 	private static double DRIVE_K = 0.15; // 0.15 how hard to drive fwd toward the target
 	private static double STEER_K = 0.035; // 0.35 how hard to turn toward the target
-	// private static double STEER_I = 0.01;
 	private static double X_OFFSET = 0.0; // 1.45 The number of degrees camera is off center
 
 	// The following fields are updated by the LimeLight Camera
@@ -32,7 +30,6 @@ public class TargetEntity extends CommandBase {
 
 	public TargetEntity() {
 		super();
-		initializeCommand();
 		RioLogger.log("TargetEntity Command Initialized");
 	}
 
@@ -42,16 +39,14 @@ public class TargetEntity extends CommandBase {
 		if (OI.limelight.getLedMode() != ledMode.PIPELINE) {
 			OI.limelight.setLedMode(ledMode.PIPELINE);
 		}
+
+		// Turn on driver mode if it wasn't turned on before
 		if (OI.limelight.getCamMode() != camMode.VISION) {
 			OI.limelight.setCamMode(camMode.VISION);
 		}
 
 		// Driving
 		Update_Limelight_Tracking();
-
-		// Determine left and right targets for more agressive steering
-		// double minLeftPwr = 0.06;
-		// double minRightPwr = 0.06; // -0.18
 
 		driveCommand = -(OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value));
 
@@ -61,15 +56,11 @@ public class TargetEntity extends CommandBase {
 			steerCommand = minSteerCommand * steerCommandSign;
 		}
 
-		double driveSign = Math.signum(driveCommand);
+		double leftPwr = -(driveCommand + steerCommand);
+		double rightPwr = -(driveCommand - steerCommand);
+		double turretPwr = Math.max(leftPwr, rightPwr);
 
-		double leftBias = driveSign * 0.00;
-		double rightBias = driveSign * 0.05;
-
-		double leftPwr = -(driveCommand + steerCommand  + leftBias);
-		double rightPwr = -(driveCommand - steerCommand + rightBias);
-
-		OI.driveTrain.drive(leftPwr, rightPwr);
+		OI.turret.setTurretSpeed(turretPwr*0.25);
 		SmartDashboard.putBoolean("Limelight.TargetIdentified", hasValidTarget);
 		SmartDashboard.putNumber("LimeLight.RightPower", rightPwr);
 		SmartDashboard.putNumber("LimeLight.LeftPower", leftPwr);
@@ -81,34 +72,19 @@ public class TargetEntity extends CommandBase {
 
 	@Override
 	public boolean isFinished() {
-		// boolean stop = false;
-		// if (isTargeting) {
-		//     if (!hasValidTarget) {
-		//         stop = true;
-		//     }
-		//     if (speedToTarget < 0.01) {
-		//         stop = true;
-		//     }
-		// }
 		if (OI.gamePad.getRawButtonPressed(RobotMap.padA)) {
 			return true;
 		}
 		return false;
-		// if((DESIRED_TARGET_AREA - OI.limelight.targetArea()) <= 0){
-		//     stop = true;
-		// }
-		// return stop;
 	}
 
 	@Override
 	public void end(boolean failed) {
-		OI.driveTrain.stop();
 		OI.limelight.setLedMode(ledMode.OFF);
 		RioLogger.log("TargetEntity command finished");
 		if (failed) {
 			RioLogger.log("TargetEntity command was interupted");
 		}
-		initializeCommand();
 	}
 
 	/**
@@ -116,17 +92,12 @@ public class TargetEntity extends CommandBase {
 	 * commands based on the tracking data from a limelight camera.
 	 */
 	public void Update_Limelight_Tracking() {
-		// double drive_k = 0.13;
-		// double steer_k = 0.012;
-		// Turning parameters
-
 		hasValidTarget = OI.limelight.hasTargets();
 		if (!hasValidTarget) {
 			driveCommand = 0.0;
 			steerCommand = 0.0;
 			return;
 		}
-		// double ty = OI.limelight.y();
 		double tx = OI.limelight.x();
 		double ta = OI.limelight.targetArea();
 
@@ -152,11 +123,6 @@ public class TargetEntity extends CommandBase {
 
 		log.drvCmd = driveCommand;
 		log.strCmd = steerCommand;
-	}
-
-	private void initializeCommand() {
-		// OI.driveTrain.setBrakeMode();
-		OI.driveTrain.stop();
 	}
 
 	class Log {
