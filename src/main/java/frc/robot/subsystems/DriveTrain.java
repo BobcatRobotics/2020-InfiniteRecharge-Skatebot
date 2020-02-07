@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.OI;
@@ -13,7 +12,7 @@ public class DriveTrain extends SubsystemBase {
     private final WPI_TalonSRX leftTalon = OI.leftTalon;
     private final WPI_TalonSRX rightTalon = OI.rightTalon;
 
-    private final DifferentialDrive diffDrive = OI.differentialDrive;
+    // private final DifferentialDrive diffDrive = OI.differentialDrive;
 
     private double leftStick = 0.0;
     private double rightStick = 0.0;
@@ -45,7 +44,9 @@ public class DriveTrain extends SubsystemBase {
      * Drive with default values (leftStick, rightStick).
      */
     public void drive() {
-        diffDrive.tankDrive(leftStick, rightStick);
+        //diffDrive.tankDrive(leftStick, rightStick);
+
+        drive(leftStick, rightStick);
     }
 
     /**
@@ -61,7 +62,8 @@ public class DriveTrain extends SubsystemBase {
             left = leftSpeed;
         }
         
-        diffDrive.tankDrive(left, right);
+        rightTalon.set(right);
+        leftTalon.set(left);
     }
 
     public void setSQRTRightPower(double rightSpeed) {

@@ -30,15 +30,13 @@ public class TargetEntity extends CommandBase {
 
 	public TargetEntity() {
 		super();
-		RioLogger.log("TargetEntity Command Initialized");
 	}
 
 	@Override
 	public void execute() {
 		// Turn on the LED's if they haven't been turned on before
-		if (OI.limelight.getLedMode() != ledMode.PIPELINE) {
-			OI.limelight.setLedMode(ledMode.PIPELINE);
-		}
+		OI.limelight.setLedMode(ledMode.ON);
+		
 
 		// Turn on driver mode if it wasn't turned on before
 		if (OI.limelight.getCamMode() != camMode.VISION) {
@@ -58,9 +56,9 @@ public class TargetEntity extends CommandBase {
 
 		double leftPwr = -(driveCommand + steerCommand);
 		double rightPwr = -(driveCommand - steerCommand);
-		double turretPwr = Math.max(leftPwr, rightPwr);
+		double turretPwr = Math.max(leftPwr, rightPwr)*-0.75;
 
-		OI.turret.setTurretSpeed(turretPwr*0.25);
+		OI.turret.setTurretSpeed(turretPwr);
 		SmartDashboard.putBoolean("Limelight.TargetIdentified", hasValidTarget);
 		SmartDashboard.putNumber("LimeLight.RightPower", rightPwr);
 		SmartDashboard.putNumber("LimeLight.LeftPower", leftPwr);
@@ -80,10 +78,11 @@ public class TargetEntity extends CommandBase {
 
 	@Override
 	public void end(boolean failed) {
-		OI.limelight.setLedMode(ledMode.OFF);
-		RioLogger.log("TargetEntity command finished");
 		if (failed) {
-			RioLogger.log("TargetEntity command was interupted");
+			RioLogger.log("TargetEntity command was interupted, trying to continue...");
+		} else {
+			OI.limelight.setLedMode(ledMode.OFF);
+			RioLogger.log("TargetEntity command finished");
 		}
 	}
 

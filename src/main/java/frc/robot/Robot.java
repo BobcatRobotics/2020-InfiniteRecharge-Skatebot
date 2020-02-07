@@ -27,12 +27,15 @@ public class Robot extends TimedRobot {
 
   private TargetEntity targetEntity = new TargetEntity();
 
+  private static final CommandScheduler schedule = CommandScheduler.getInstance();
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
   @Override
   public void robotInit() {
+    
   }
 
   /**
@@ -44,6 +47,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    
   }
 
   /**
@@ -52,9 +56,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     driveTrain.stop();
-    if (!CommandScheduler.getInstance().isScheduled(targetEntity)) {
+    if (!schedule.isScheduled(targetEntity)) {
       targetEntity.schedule();
-			CommandScheduler.getInstance().run();
     }
   }
 
@@ -63,11 +66,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    driveTrain.drive();
-    if (!CommandScheduler.getInstance().isScheduled(targetEntity) && OI.gamePad.getRawButtonPressed(RobotMap.padY)) {
-      targetEntity.schedule();
-			CommandScheduler.getInstance().run();
-    }
+    // targetEntity.schedule();
+    schedule.run();
+    
+    //if (!schedule.isScheduled(targetEntity) && OI.gamePad.getRawButtonPressed(RobotMap.padY)) {
+      //targetEntity.schedule();
+    //} else if (schedule.isScheduled(targetEntity)) {
+      //schedule.run();
+    // }
   }
 
   /**
