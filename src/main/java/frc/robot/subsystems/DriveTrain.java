@@ -10,7 +10,7 @@ import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 
 public class DriveTrain extends SubsystemBase {
-	private final WPI_TalonSRX leftTalon = OI.leftTalon;
+    private final WPI_TalonSRX leftTalon = OI.leftTalon;
     private final WPI_TalonSRX rightTalon = OI.rightTalon;
 
     private final DifferentialDrive diffDrive = OI.differentialDrive;
@@ -20,6 +20,7 @@ public class DriveTrain extends SubsystemBase {
 
     private double right = 0.0;
     private double left = 0.0;
+    private boolean sqrt = true;
 
     private double leftVelocity = 0.0;
     private double rightVelocity = 0.0;
@@ -27,19 +28,19 @@ public class DriveTrain extends SubsystemBase {
     private double leftDistance = 0.0;
     private double rightDistance = 0.0;
 
-	public DriveTrain() {
-		// Initialize Drive Train
+    public DriveTrain() {
+        // Initialize Drive Train
         RioLogger.log("DriveTrain() created.");
 
         leftTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
         leftTalon.setSelectedSensorPosition(0, 0, 0);
-        leftTalon.setSensorPhase(true); 
+        leftTalon.setSensorPhase(true);
 
         rightTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
         rightTalon.setSelectedSensorPosition(0, 0, 0);
         rightTalon.setSensorPhase(false);
     }
-    
+
     /**
      * Drive with default values (leftStick, rightStick).
      */
@@ -50,15 +51,20 @@ public class DriveTrain extends SubsystemBase {
     /**
      * Drive with custom values.
      */
-	public void drive(double leftSpeed, double rightSpeed) {
-        
-        setRightPower(rightSpeed);
-        setLeftPower(leftSpeed);
+    public void drive(double leftSpeed, double rightSpeed) {
 
+        if (sqrt) {
+            setSQRTRightPower(rightSpeed);
+            setSQRTLeftPower(leftSpeed);
+        } else {
+            right = rightSpeed;
+            left = leftSpeed;
+        }
+        
         diffDrive.tankDrive(left, right);
     }
 
-    public void setRightPower(double rightSpeed) {
+    public void setSQRTRightPower(double rightSpeed) {
 
         if (rightSpeed < 0) {
             right = -1.0 * (Math.sqrt(-1.0 * rightSpeed));
@@ -67,7 +73,7 @@ public class DriveTrain extends SubsystemBase {
         }
     }
 
-    public void setLeftPower(double leftSpeed) {
+    public void setSQRTLeftPower(double leftSpeed) {
 
         if (leftSpeed < 0) {
             left = -1.0 * (Math.sqrt(-1.0 * leftSpeed));
@@ -75,15 +81,20 @@ public class DriveTrain extends SubsystemBase {
             left = Math.sqrt(leftSpeed);
         }
     }
-    
+
+    public void toggleSqrt() {
+
+        sqrt = !sqrt;
+    }
+
     /**
      * Stop the robot from driving
      */
     public void stop() {
         drive(0.0, 0.0);
     }
-    
-    /** 
+
+    /**
      * Updates distance, velocity, and stick values.
      */
     public void updateAndShowValues() {
@@ -92,7 +103,7 @@ public class DriveTrain extends SubsystemBase {
 
         leftVelocity = leftTalon.getSelectedSensorVelocity(0);
         rightVelocity = rightTalon.getSelectedSensorVelocity(0);
-    
+
         leftStick = OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value);
         rightStick = OI.rightJoystick.getRawAxis(Joystick.AxisType.kY.value);
 
