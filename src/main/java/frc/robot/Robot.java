@@ -21,20 +21,22 @@ public class Robot extends TimedRobot {
 
   private final DriveTrain driveTrain = OI.driveTrain;
   private final Turret turret = OI.turret;
+  private final TargetEntity targetEntity  = new TargetEntity();
 
   private final XboxController gamePad = OI.gamePad;
 
   private boolean xPress;
   private boolean yPress;
   private boolean bPress;
-
-  private TargetEntity targetEntity;
+  private boolean upPress;
 
   @Override
   public void robotInit() {
     xPress = false;
     yPress = false;
     bPress = false;
+    upPress = false;
+
     OI.limelight.setCamMode(camModeStart);
     OI.limelight.setLedMode(ledModeStart);
     OI.driveTrain.toggleSqrt();
@@ -47,20 +49,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    driveTrain.stop();
-    targetEntity = new TargetEntity();
-    if (!schedule.isScheduled(targetEntity)) {
-      targetEntity.schedule();
-    }
   }
 
   @Override
   public void autonomousPeriodic() {
-    if (!schedule.isScheduled(targetEntity) && OI.gamePad.getRawButtonPressed(RobotMap.padY)) {
-      targetEntity.schedule();
-    }
-
-    schedule.run();
   }
 
   @Override
@@ -69,8 +61,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    driveTrain.updateAndShowValues();
-    turret.updateAndShowValues();
+    SmartDashboard.putNumber("GamePad.POV", OI.gamePad.getPOV(RobotMap.pov));
+
+    if (!upPress && OI.gamePad.getPOV(RobotMap.pov) == RobotMap.povUp && !schedule.isScheduled(targetEntity)) {
+      upPress = true;
+      targetEntity.schedule();
+    } else {
+      upPress = false;
+    }
 
     // Press the right button to set the zero position of the turret.
     // Also stops the drive train.
@@ -121,6 +119,10 @@ public class Robot extends TimedRobot {
     } else {
       yPress = false;
     }
+    
+    driveTrain.updateAndShowValues();
+    turret.updateAndShowValues();
+    schedule.run();
   }
 
   @Override

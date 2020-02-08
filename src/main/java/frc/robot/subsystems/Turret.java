@@ -74,7 +74,7 @@ public class Turret extends SubsystemBase {
      * Sets the speed of the turret talon to the turret stick value.
      */
     public void updateTalonSpeed() {
-        setTurretSpeed(stick * 0.65);
+        setTurretSpeed(stick * 0.5);
     }
 
     /**

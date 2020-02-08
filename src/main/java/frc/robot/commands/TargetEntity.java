@@ -1,12 +1,8 @@
 package frc.robot.commands;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.OI;
 import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
@@ -15,18 +11,21 @@ import frc.robot.subsystems.Limelight.ledMode;
 
 public class TargetEntity extends CommandBase {
 	private static final double Kp = 0.1; // Proportional control constant
-	private static final double X_OFFSET = 0.02; // The number of degrees camera is off center
-	private static final double Speed = 0.05; // A decimal representing the % speed that the turret should turn at
+	// private static final double Speed = 0.2; // A decimal representing the % speed that the turret should turn at
 
 	private boolean hasValidTarget; // Updated by the LimeLight camera
-	private double power;
+	private double power; // Updated by the Limelight camera
+	private double additionalPower; // Updated by the right Joystick on the gamepad 
 	private double turretPower; // Updated by the LimeLight camera
 
 	public TargetEntity() {
 		super();
 		hasValidTarget = false;
 		power = 0;
+		additionalPower = 0;
 		turretPower = 0;
+		addRequirements(OI.limelight);
+		addRequirements(OI.turret);
 		RioLogger.log("Tracking started");
 	}
 
@@ -39,30 +38,42 @@ public class TargetEntity extends CommandBase {
 		hasValidTarget = OI.limelight.hasTargets();
 		if (!hasValidTarget) {
 			power = 0.0;
+			additionalPower = 0.0;
 			turretPower = 0.0;
 		} else {
 			double x = OI.limelight.tx();
 			double error = -x;
 
 			// Instead of waiting for the target to go off the screen, center the target
-			if (x > 1.0) {
-				power = Kp * error - X_OFFSET;
-			} else if (x < 1.0) {
-				power = Kp * error + X_OFFSET;
+			power = Kp*error*0.25;
+			if (x > 0.15 && power > -0.05) {
+				power = -0.05;
+			} else if (x < -0.15 && power < 0.05) {
+				power = 0.05;
+			} else if (x < 0.15 && x > -0.15) {
+				power = 0.0;
 			}
+			
 
-			turretPower = (power * Speed) + (Math.abs(OI.gamePad.getY(Hand.kLeft)) * 0.5);
+			additionalPower = Math.abs(OI.gamePad.getY(Hand.kRight))*Math.signum(power);
+			turretPower = power + additionalPower;
+			if (turretPower > 1) {
+				turretPower = 1;
+			} else if (turretPower < -1) {
+				turretPower = -1;
+			}
 		}
 
 		OI.turret.setTurretSpeed(turretPower);
 		SmartDashboard.putBoolean("Target.TargetIdentified", hasValidTarget);
 		SmartDashboard.putNumber("Target.Power", power);
+		SmartDashboard.putNumber("Target.AddPower", additionalPower);
 		SmartDashboard.putNumber("Target.TurretPower", turretPower);
 	}
 
 	@Override
 	public boolean isFinished() {
-		if (OI.gamePad.getRawButtonPressed(RobotMap.padA)) {
+		if (OI.gamePad.getPOV(RobotMap.pov) == RobotMap.povDown) {
 			return true;
 		}
 		return false;
@@ -76,13 +87,5 @@ public class TargetEntity extends CommandBase {
 		} else {
 			RioLogger.log("Tracking finished, press Y to start again");
 		}
-	}
-
-	@Override
-	public Set<Subsystem> getRequirements() {
-		Set<Subsystem> r = new HashSet<Subsystem>();
-		r.add(OI.limelight);
-		r.add(OI.turret);
-		return r;
 	}
 }
