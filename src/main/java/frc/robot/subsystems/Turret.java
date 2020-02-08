@@ -43,7 +43,7 @@ public class Turret extends SubsystemBase {
      * position.
      */
     public boolean canZeroTurret() {
-        return (distance < -(threshold)) || (distance > threshold);
+        return (Math.abs(distance) > threshold);
     }
 
     /**
@@ -83,4 +83,5 @@ public class Turret extends SubsystemBase {
     public void setTurretSpeed(double value) {
         OI.turretTalon.set(ControlMode.PercentOutput, value);
     }
+
 }
