@@ -12,10 +12,10 @@ import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
   // The mode that Limelight's camera will start in
-  private final camMode camModeStart = camMode.DRIVER;
+  private final camMode camModeStart = camMode.VISION;
 
   // The mode that Limelight's LED's will start in
-  private final ledMode ledModeStart = ledMode.OFF;
+  private final ledMode ledModeStart = ledMode.ON;
 
   private static final CommandScheduler schedule = CommandScheduler.getInstance();
 
@@ -37,7 +37,6 @@ public class Robot extends TimedRobot {
     bPress = false;
     OI.limelight.setCamMode(camModeStart);
     OI.limelight.setLedMode(ledModeStart);
-    OI.driveTrain.toggleSqrt();
   }
 
   @Override
@@ -128,7 +127,6 @@ public class Robot extends TimedRobot {
     xPress = false;
     yPress = false;
     bPress = false;
-    OI.limelight.setLedMode(ledMode.OFF);
   }
 
   @Override
