@@ -95,6 +95,14 @@ public class DriveTrain extends SubsystemBase {
         leftStick = OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value);
         rightStick = OI.rightJoystick.getRawAxis(Joystick.AxisType.kY.value);
 
+        if (Math.abs(leftStick) <= .02) {
+            leftStick = 0.0;
+        }
+
+        if (Math.abs(rightStick) <= .02) {
+            rightStick = 0.0;
+        }
+        
         SmartDashboard.putNumber("left stick:", leftStick);
         SmartDashboard.putNumber("right stick:", rightStick);
         SmartDashboard.putNumber("left distance:", leftDistance);
