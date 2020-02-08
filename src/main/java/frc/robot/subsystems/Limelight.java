@@ -55,23 +55,23 @@ public class Limelight extends SubsystemBase {
         return tTarget.getDouble(0.0) == 1.0;
     }
 
-    public double x() {
+    public double tx() {
         return tx.getDouble(0.0);
     }
 
-    public double y() {
+    public double ty() {
         return ty.getDouble(0.0);
     }
 
-    public double targetArea() {
+    public double ta() {
         return ta.getDouble(0.0);
     }
 
-    public double rightTarget() {
+    public double ta1() {
         return ta1.getDouble(0.0);
     }
 
-    public double leftTarget() {
+    public double ta0() {
         return ta0.getDouble(0.0);
     }
 

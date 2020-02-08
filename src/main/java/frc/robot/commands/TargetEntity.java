@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.OI;
 import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
-import frc.robot.lib.RioLoggerThread;
 import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
 
@@ -23,14 +22,11 @@ public class TargetEntity extends CommandBase {
 	private double power;
 	private double turretPower; // Updated by the LimeLight camera
 
-	private Log log; // This is updated by the state of the Command
-
 	public TargetEntity() {
 		super();
 		hasValidTarget = false;
 		power = 0;
 		turretPower = 0;
-		log = new Log();
 		RioLogger.log("Tracking started");
 	}
 
@@ -40,51 +36,28 @@ public class TargetEntity extends CommandBase {
 		OI.limelight.setCamMode(camMode.VISION); // Turn on vision mode if it wasn't turned on before
 
 		// Driving
-		Update_Limelight_Tracking();
-
-		OI.turret.setTurretSpeed(turretPower);
-		SmartDashboard.putBoolean("Limelight.TargetIdentified", hasValidTarget);
-		SmartDashboard.putNumber("LimeLight.TurretPower", turretPower);
-
-		log.turretPower = turretPower;
-		RioLoggerThread.log(log.logLine());
-	}
-
-	/**
-	 * This function implements a simple method of generating driving and steering
-	 * commands based on the tracking data from a limelight camera.
-	 */
-	public void Update_Limelight_Tracking() {
 		hasValidTarget = OI.limelight.hasTargets();
 		if (!hasValidTarget) {
 			power = 0.0;
-			return;
+			turretPower = 0.0;
+		} else {
+			double x = OI.limelight.tx();
+			double error = -x;
+
+			// Instead of waiting for the target to go off the screen, center the target
+			if (x > 1.0) {
+				power = Kp * error - X_OFFSET;
+			} else if (x < 1.0) {
+				power = Kp * error + X_OFFSET;
+			}
+
+			turretPower = (-(OI.gamePad.getX(Hand.kLeft)) + power) * Speed;
 		}
 
-		double tx = OI.limelight.x();
-		double heading_error = -tx;
-
-		// Instead of waiting for the target to go off the screen, center the target
-		if (tx > 1.0) {
-			power = Kp * heading_error - X_OFFSET;
-		} else if (tx < 1.0) {
-			power = Kp * heading_error + X_OFFSET;
-		}
-
-		turretPower = (-(OI.gamePad.getX(Hand.kLeft)) + power) * Speed;
-		SmartDashboard.putNumber("Limelight.TurretPower", turretPower);
-		log.tx = tx;
-		log.strCmd = power;
-	}
-
-	class Log {
-		double tx = 0.0;
-		double strCmd = 0.0;
-		double turretPower = 0.0;
-
-		public String logLine() {
-			return String.format("%6.4f %6.4f %6.4f", tx, strCmd, turretPower);
-		}
+		OI.turret.setTurretSpeed(turretPower);
+		SmartDashboard.putBoolean("Target.TargetIdentified", hasValidTarget);
+		SmartDashboard.putNumber("Target.Power", power);
+		SmartDashboard.putNumber("Target.TurretPower", turretPower);
 	}
 
 	@Override

@@ -25,7 +25,7 @@ public class Turret extends SubsystemBase {
         OI.turretTalon.setSelectedSensorPosition(0, 0, 0);
         OI.turretTalon.setSensorPhase(false);
 
-        RioLogger.log("Turret() created");
+        RioLogger.log("Turret created");
     }
 
     /**
@@ -74,7 +74,7 @@ public class Turret extends SubsystemBase {
      * Sets the speed of the turret talon to the turret stick value.
      */
     public void updateTalonSpeed() {
-        OI.turretTalon.set(ControlMode.PercentOutput, stick * 0.5);
+        OI.turretTalon.set(ControlMode.PercentOutput, stick * 0.65 + 0.1);
     }
 
     /**
