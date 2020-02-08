@@ -5,10 +5,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.TargetEntity;
-import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
-import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
   // The mode that Limelight's camera will start in
@@ -19,9 +17,7 @@ public class Robot extends TimedRobot {
 
   private static final CommandScheduler schedule = CommandScheduler.getInstance();
 
-  private final DriveTrain driveTrain = OI.driveTrain;
-  private final Turret turret = OI.turret;
-  private final TargetEntity targetEntity  = new TargetEntity();
+  private final TargetEntity targetEntity = new TargetEntity();
 
   private final XboxController gamePad = OI.gamePad;
 
@@ -39,12 +35,12 @@ public class Robot extends TimedRobot {
 
     OI.limelight.setCamMode(camModeStart);
     OI.limelight.setLedMode(ledModeStart);
+    // Toggles square root scaling of the speed of the drive train. Sets it to false
     OI.driveTrain.toggleSqrt();
   }
 
   @Override
   public void robotPeriodic() {
-
   }
 
   @Override
@@ -63,6 +59,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     SmartDashboard.putNumber("GamePad.POV", OI.gamePad.getPOV(RobotMap.pov));
 
+    // Press the Up arrow on the D-pad to schedule the TargetEntity Command
     if (!upPress && OI.gamePad.getPOV(RobotMap.pov) == RobotMap.povUp && !schedule.isScheduled(targetEntity)) {
       upPress = true;
       targetEntity.schedule();
@@ -76,21 +73,21 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
     if (zeroDrive) {
       // Defines the zero position of the turret
-      turret.zeroDrive();
-      driveTrain.stop();
+      OI.turret.zeroDrive();
+      OI.driveTrain.stop();
     } else {
-      driveTrain.drive();
+      OI.driveTrain.drive();
     }
 
     // Press the left button to zero the turret.
     // This makes it unwind the cables and spin back into the defined zero position.
-    SmartDashboard.putBoolean("Can Zero Turret:", turret.canZeroTurret());
-    if (gamePad.getRawButton(RobotMap.leftButton) && turret.canZeroTurret()) {
+    SmartDashboard.putBoolean("Can Zero Turret:", OI.turret.canZeroTurret());
+    if (gamePad.getRawButton(RobotMap.leftButton) && OI.turret.canZeroTurret()) {
       // Checks if the turret is within 250 distance of the zero point
       // If the turret is, it will not zero the turret
-      turret.zeroTurret();
+      OI.turret.zeroTurret();
     } else {
-      turret.updateTalonSpeed();
+      OI.turret.updateTalonSpeed();
     }
 
     // Press the B button to switch the camera mode of Limelight.
@@ -119,9 +116,10 @@ public class Robot extends TimedRobot {
     } else {
       yPress = false;
     }
-    
-    driveTrain.updateAndShowValues();
-    turret.updateAndShowValues();
+
+    OI.driveTrain.updateAndShowValues();
+    OI.turret.updateAndShowValues();
+    // Runs all Commands
     schedule.run();
   }
 
@@ -135,8 +133,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    driveTrain.updateAndShowValues();
-    turret.updateAndShowValues();
+    OI.driveTrain.updateAndShowValues();
+    OI.turret.updateAndShowValues();
   }
 
   @Override
