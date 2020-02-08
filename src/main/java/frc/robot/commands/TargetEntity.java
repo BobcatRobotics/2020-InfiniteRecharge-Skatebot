@@ -10,7 +10,7 @@ import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
 
 public class TargetEntity extends CommandBase {
-	private static final double Kp = 0.1; // Proportional control constant
+	private static final double Kp = 0.025; // Proportional control constant
 	// private static final double Speed = 0.2; // A decimal representing the % speed that the turret should turn at
 
 	private boolean hasValidTarget; // Updated by the LimeLight camera
@@ -34,18 +34,22 @@ public class TargetEntity extends CommandBase {
 		OI.limelight.setLedMode(ledMode.ON); // Turn on the LED's if they haven't been turned on before
 		OI.limelight.setCamMode(camMode.VISION); // Turn on vision mode if it wasn't turned on before
 
-		// Driving
+		// Whether Limelight detects a target
 		hasValidTarget = OI.limelight.hasTargets();
 		if (!hasValidTarget) {
+			// If Limelight does not detect a target then it sets the turret power to 0.
 			power = 0.0;
 			additionalPower = 0.0;
 			turretPower = 0.0;
 		} else {
+			// The number of degrees the target is off center
 			double x = OI.limelight.tx();
+			// The number of degrees Limelight needs to shift by to be centered
 			double error = -x;
 
 			// Instead of waiting for the target to go off the screen, center the target
-			power = Kp*error*0.25;
+			power = Kp * error;
+			// If the power is too small, increase it to +/- 0.05 so the turret actually moves
 			if (x > 0.15 && power > -0.05) {
 				power = -0.05;
 			} else if (x < -0.15 && power < 0.05) {
@@ -53,10 +57,12 @@ public class TargetEntity extends CommandBase {
 			} else if (x < 0.15 && x > -0.15) {
 				power = 0.0;
 			}
-			
 
-			additionalPower = Math.abs(OI.gamePad.getY(Hand.kRight))*Math.signum(power);
+			// To increase the speed of the turret, you can push the Right Joystick on
+			// the gamepad to add additional power
+			additionalPower = Math.abs(OI.gamePad.getY(Hand.kRight)) * Math.signum(power);
 			turretPower = power + additionalPower;
+			// Makes sure the power does not get higher than 1 or less than -1
 			if (turretPower > 1) {
 				turretPower = 1;
 			} else if (turretPower < -1) {
@@ -73,6 +79,7 @@ public class TargetEntity extends CommandBase {
 
 	@Override
 	public boolean isFinished() {
+		// Press the Down arrow on the D-pad to end the command
 		if (OI.gamePad.getPOV(RobotMap.pov) == RobotMap.povDown) {
 			return true;
 		}
