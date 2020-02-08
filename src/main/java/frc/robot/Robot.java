@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.TargetEntity;
@@ -18,8 +17,6 @@ public class Robot extends TimedRobot {
   private static final CommandScheduler schedule = CommandScheduler.getInstance();
 
   private final TargetEntity targetEntity = new TargetEntity();
-
-  private final XboxController gamePad = OI.gamePad;
 
   private boolean xPress;
   private boolean yPress;
@@ -57,8 +54,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("GamePad.POV", OI.gamePad.getPOV(RobotMap.pov));
-
     // Press the Up arrow on the D-pad to schedule the TargetEntity Command
     if (!upPress && OI.gamePad.getPOV(RobotMap.pov) == RobotMap.povUp && !schedule.isScheduled(targetEntity)) {
       upPress = true;
@@ -69,7 +64,7 @@ public class Robot extends TimedRobot {
 
     // Press the right button to set the zero position of the turret.
     // Also stops the drive train.
-    boolean zeroDrive = gamePad.getRawButton(RobotMap.rightButton);
+    boolean zeroDrive = OI.gamePad.getRawButton(RobotMap.rightButton);
     SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
     if (zeroDrive) {
       // Defines the zero position of the turret
@@ -82,7 +77,7 @@ public class Robot extends TimedRobot {
     // Press the left button to zero the turret.
     // This makes it unwind the cables and spin back into the defined zero position.
     SmartDashboard.putBoolean("Can Zero Turret:", OI.turret.canZeroTurret());
-    if (gamePad.getRawButton(RobotMap.leftButton) && OI.turret.canZeroTurret()) {
+    if (OI.gamePad.getRawButton(RobotMap.leftButton) && OI.turret.canZeroTurret()) {
       // Checks if the turret is within 250 distance of the zero point
       // If the turret is, it will not zero the turret
       OI.turret.zeroTurret();
@@ -92,7 +87,7 @@ public class Robot extends TimedRobot {
 
     // Press the B button to switch the camera mode of Limelight.
     // DRIVER -> VISION
-    if (gamePad.getRawButtonPressed(RobotMap.padB) && !bPress) {
+    if (OI.gamePad.getRawButtonPressed(RobotMap.padB) && !bPress) {
       bPress = true;
       OI.limelight.switchCamMode();
     } else {
@@ -101,7 +96,7 @@ public class Robot extends TimedRobot {
 
     // Press the X Button to switch the LED mode of Limelight.
     // PIPELINE -> BLINK -> OFF -> ON
-    if (gamePad.getRawButtonPressed(RobotMap.padX) && !xPress) {
+    if (OI.gamePad.getRawButtonPressed(RobotMap.padX) && !xPress) {
       xPress = true;
       OI.limelight.switchLedMode();
     } else {
@@ -110,7 +105,7 @@ public class Robot extends TimedRobot {
 
     // Press the Y Button to switch the LED mode of Limelight from ON and OFF.
     // Old value -> Off -> On
-    if (gamePad.getRawButtonPressed(RobotMap.padY) && !yPress) {
+    if (OI.gamePad.getRawButtonPressed(RobotMap.padY) && !yPress) {
       yPress = true;
       OI.limelight.switchLedModeOnOff();
     } else {
@@ -119,7 +114,8 @@ public class Robot extends TimedRobot {
 
     OI.driveTrain.updateAndShowValues();
     OI.turret.updateAndShowValues();
-    // Runs all Commands
+    SmartDashboard.putNumber("GamePad.POV", OI.gamePad.getPOV(RobotMap.pov));
+    // Runs all Commands. ** Needs to called in a periodic block **
     schedule.run();
   }
 

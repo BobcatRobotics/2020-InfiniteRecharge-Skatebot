@@ -59,13 +59,13 @@ public class DriveTrain extends SubsystemBase {
             left = leftSpeed;
         }
 
-        rightTalon.set(right*-1);
+        rightTalon.set(-right);
         leftTalon.set(left);
     }
 
     public double setSQRTPower(double speed) {
         if (speed < 0) {
-            return -1.0 * (Math.sqrt(-1.0 * speed));
+            return -(Math.sqrt(-speed));
         } else {
             return Math.sqrt(speed);
         }
@@ -83,7 +83,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     /**
-     * Updates distance, velocity, and stick values.
+     * Updates distance, velocity, and stick values and puts them on the SmartDashboard.
      */
     public void updateAndShowValues() {
         leftDistance = leftTalon.getSelectedSensorPosition(0);

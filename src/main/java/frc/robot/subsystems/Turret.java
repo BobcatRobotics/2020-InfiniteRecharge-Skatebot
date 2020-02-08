@@ -83,5 +83,4 @@ public class Turret extends SubsystemBase {
     public void setTurretSpeed(double value) {
         OI.turretTalon.set(ControlMode.PercentOutput, value);
     }
-
 }

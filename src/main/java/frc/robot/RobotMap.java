@@ -9,15 +9,15 @@ public class RobotMap {
     public static final int rightJoystick = 1;
     public static final int gamePad = 2;
 
+    // gamePad button mappings
     public static final int padA = 1;
     public static final int padB = 2;
     public static final int padY = 3;
     public static final int padX = 4;
+    public static final int leftButton = 5;
+    public static final int rightButton = 6;
 
     public static final int pov = 0;
     public static final int povUp = 0;
     public static final int povDown = 180;
-    
-    public static final int leftButton = 5;
-    public static final int rightButton = 6;
 }
