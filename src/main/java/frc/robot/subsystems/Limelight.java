@@ -12,8 +12,8 @@ public class Limelight extends SubsystemBase {
     private NetworkTableEntry tx;
     private NetworkTableEntry ty;
     private NetworkTableEntry ta;
-    private NetworkTableEntry ta0;
-    private NetworkTableEntry ta1;
+    //private NetworkTableEntry ta0;
+    //private NetworkTableEntry ta1;
 
     public enum ledMode {
         PIPELINE(0), 
@@ -45,8 +45,8 @@ public class Limelight extends SubsystemBase {
             tx = limelight.getEntry("tx");
             ty = limelight.getEntry("ty");
             ta = limelight.getEntry("ta");
-            ta0 = limelight.getEntry("ta0");
-            ta1 = limelight.getEntry("ta1");
+            //ta0 = limelight.getEntry("ta0");
+            //ta1 = limelight.getEntry("ta1");
         } catch (Exception e) {
             RioLogger.errorLog("Unable to initialize LimeLight. Error is " + e);
         }
@@ -81,13 +81,13 @@ public class Limelight extends SubsystemBase {
         return ta.getDouble(0.0);
     }
 
-    public double ta1() {
-        return ta1.getDouble(0.0);
-    }
+    //public double ta1() {
+    //    return ta1.getDouble(0.0);
+    //}
 
-    public double ta0() {
-        return ta0.getDouble(0.0);
-    }
+    //public double ta0() {
+    //    return ta0.getDouble(0.0);
+    //}
 
     public ledMode getLedMode() {
         double entry = (double)getLedModeEntry().getNumber(0);

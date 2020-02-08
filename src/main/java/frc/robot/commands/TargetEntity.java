@@ -18,6 +18,7 @@ public class TargetEntity extends CommandBase {
 	private double turretPower; // Updated by the LimeLight camera; equal to power + additionalPower
 
 	public TargetEntity() {
+		// Intitialize Target Entity
 		super();
 		hasValidTarget = false;
 		power = 0;
@@ -28,6 +29,9 @@ public class TargetEntity extends CommandBase {
 		RioLogger.log("Tracking started");
 	}
 
+	/**
+	 * Called repeatedly while the command is scheduled.
+	 */
 	@Override
 	public void execute() {
 		OI.limelight.setLedMode(ledMode.ON); // Turn on the LED's if they haven't been turned on before
@@ -80,12 +84,16 @@ public class TargetEntity extends CommandBase {
 		}
 
 		OI.turret.setTurretSpeed(turretPower);
+		// Puts values on the Smart Dashboard
 		SmartDashboard.putBoolean("Target.TargetIdentified", hasValidTarget);
 		SmartDashboard.putNumber("Target.Power", power);
 		SmartDashboard.putNumber("Target.AddPower", additionalPower);
 		SmartDashboard.putNumber("Target.TurretPower", turretPower);
 	}
 
+	/**
+	 * Once a command finishes, the scheduler will call its end() method and un-schedule it.
+	 */
 	@Override
 	public boolean isFinished() {
 		// Press the Down arrow on the D-pad to end the command
@@ -95,6 +103,9 @@ public class TargetEntity extends CommandBase {
 		return false;
 	}
 
+	/**
+	 * Called when either the command finishes normally, or when it gets interrupted/canceled.
+	 */
 	@Override
 	public void end(boolean failed) {
 		OI.limelight.setLedMode(ledMode.OFF);

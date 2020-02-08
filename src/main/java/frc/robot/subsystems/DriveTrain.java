@@ -12,14 +12,12 @@ public class DriveTrain extends SubsystemBase {
     private final WPI_TalonSRX leftTalon = OI.leftTalon;
     private final WPI_TalonSRX rightTalon = OI.rightTalon;
 
-    // private final DifferentialDrive diffDrive = OI.differentialDrive;
-
     private double leftStick = 0.0;
     private double rightStick = 0.0;
 
-    private double right = 0.0;
-    private double left = 0.0;
-    private boolean sqrt = true;
+    private double rightSpeed = 0.0;
+    private double leftSpeed = 0.0;
+    private boolean sqrtSpeeds = true;
 
     private double leftVelocity = 0.0;
     private double rightVelocity = 0.0;
@@ -37,11 +35,11 @@ public class DriveTrain extends SubsystemBase {
 
         rightTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
         rightTalon.setSelectedSensorPosition(0, 0, 0);
-        rightTalon.setSensorPhase(false);
+        rightTalon.setSensorPhase(true);
     }
 
     /**
-     * Drive with default values (leftStick, rightStick).
+     * Drive with default values (the leftStick and rightStick values from the Joysticks).
      */
     public void drive() {
         drive(leftStick, rightStick);
@@ -49,20 +47,26 @@ public class DriveTrain extends SubsystemBase {
 
     /**
      * Drive with custom values.
+     * @param left is the speed sent to the left motor
+     * @param right is the speed sent to the right motor
      */
-    public void drive(double leftSpeed, double rightSpeed) {
-        if (sqrt) {
-            right = setSQRTPower(rightSpeed);
-            left = setSQRTPower(leftSpeed);
+    public void drive(double left, double right) {
+        if (sqrtSpeeds) {
+            rightSpeed = setSQRTPower(right);
+            leftSpeed = setSQRTPower(left);
         } else {
-            right = rightSpeed;
-            left = leftSpeed;
+            rightSpeed = right;
+            leftSpeed = left;
         }
 
-        rightTalon.set(-right);
-        leftTalon.set(left);
+        rightTalon.set(rightSpeed);
+        leftTalon.set(leftSpeed);
     }
 
+    /**
+     * @param speed is the speed to be square rooted
+     * @return The square root of the speed, with the according sign.
+     */
     public double setSQRTPower(double speed) {
         if (speed < 0) {
             return -(Math.sqrt(-speed));
@@ -71,8 +75,11 @@ public class DriveTrain extends SubsystemBase {
         }
     }
 
+    /**
+     * Changes whether the speed of the drive train is square rooted from true to false and vice versa.
+     */
     public void toggleSqrt() {
-        sqrt = !sqrt;
+        sqrtSpeeds = !sqrtSpeeds;
     }
 
     /**

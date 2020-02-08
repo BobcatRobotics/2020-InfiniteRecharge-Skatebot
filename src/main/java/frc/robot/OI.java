@@ -5,8 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Turret;
@@ -25,6 +23,4 @@ public class OI {
     public static final DriveTrain driveTrain = new DriveTrain();
     public static final Limelight limelight = new Limelight();
     public static final Turret turret = new Turret();
-
-    public static Button targetEntity = new JoystickButton(gamePad, RobotMap.padA);
 }

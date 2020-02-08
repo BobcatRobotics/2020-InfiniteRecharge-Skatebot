@@ -10,13 +10,16 @@ import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 
 public class Turret extends SubsystemBase {
-    private static final int threshold = 250;
+    // This value represents the minimum distance from the defined 
+    // zero position to move the turret back to it
+    private static final int zeroThreshold = 250;
 
     private double stick;
     private double velocity;
     private double distance;
 
     public Turret() {
+        // Initialize Turret
         stick = 0.0;
         velocity = 0.0;
         distance = 0.0;
@@ -38,19 +41,18 @@ public class Turret extends SubsystemBase {
     }
 
     /**
-     * Boolean value representing if the turret is in a position that can use the
-     * zeroTurret() method. It checks if it is within 250 distance of the zero
-     * position.
+     * @return Boolean value representing if the turret is in a position that can use the
+     * zeroTurret() method. It checks if it is within 250 distance of the zero position.
      */
     public boolean canZeroTurret() {
-        return (Math.abs(distance) > threshold);
+        return (Math.abs(distance) > zeroThreshold);
     }
 
     /**
-     * Moves the turret back to the defined zero position.
+     * Moves the turret back to the defined zero position set by the zeroDrive() method.
      */
     public void zeroTurret() {
-        if (distance > -(threshold)) {
+        if (distance > -(zeroThreshold)) {
             setTurretSpeed(-(Math.abs(stick) * 0.5) + 0.1);
         } else {
             setTurretSpeed(Math.abs(stick) * 0.5 + 0.1);
@@ -72,6 +74,7 @@ public class Turret extends SubsystemBase {
 
     /**
      * Sets the speed of the turret talon to the turret stick value.
+     * (Divided by 2 so it doesn't go too fast.)
      */
     public void updateTalonSpeed() {
         setTurretSpeed(stick * 0.5);
@@ -79,6 +82,10 @@ public class Turret extends SubsystemBase {
 
     /**
      * Sets the speed for the turret to a custom value
+     * @param value must be between -1 and 1, inclusive.
+     * 
+     * <p>Negative values make the turret spin counterclockwise,
+     * Positive values make it spin clockwise.
      */
     public void setTurretSpeed(double value) {
         OI.turretTalon.set(ControlMode.PercentOutput, value);
