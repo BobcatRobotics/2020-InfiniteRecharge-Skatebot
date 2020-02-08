@@ -48,13 +48,17 @@ public class TargetEntity extends CommandBase {
 			double error = -x;
 
 			// Instead of waiting for the target to go off the screen, center the target
+			// This value will be negative if it needs to go right and positive if it needs to go left
 			power = Kp * error;
+			double minimumPower = 0.05;
+			double threshold = 0.15;
 			// If the power is too small, increase it to +/- 0.05 so the turret actually moves
-			if (x > 0.15 && power > -0.05) {
-				power = -0.05;
-			} else if (x < -0.15 && power < 0.05) {
-				power = 0.05;
-			} else if (x < 0.15 && x > -0.15) {
+			if (x > threshold && power > -minimumPower) {
+				power = -minimumPower;
+			} else if (x < -threshold && power < minimumPower) {
+				power = minimumPower;
+			} else if (x < threshold && x > -threshold) {
+				// If the target is not off center by that much, we don't need to change the position
 				power = 0.0;
 			}
 
