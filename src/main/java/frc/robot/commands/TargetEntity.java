@@ -14,9 +14,9 @@ import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
 
 public class TargetEntity extends CommandBase {
-	private static final double Kp = -0.1f; // Proportional control constant
-	private static final double X_OFFSET = 0.05; // The number of degrees camera is off center
-	private static final double Speed = 0.3; // A decimal representing the % speed that the turret should turn at
+	private static final double Kp = 0.1; // Proportional control constant
+	private static final double X_OFFSET = 0.02; // The number of degrees camera is off center
+	private static final double Speed = 0.05; // A decimal representing the % speed that the turret should turn at
 
 	private boolean hasValidTarget; // Updated by the LimeLight camera
 	private double power;
@@ -51,7 +51,7 @@ public class TargetEntity extends CommandBase {
 				power = Kp * error + X_OFFSET;
 			}
 
-			turretPower = (-(OI.gamePad.getX(Hand.kLeft)) + power) * Speed;
+			turretPower = (power * Speed) + (Math.abs(OI.gamePad.getY(Hand.kLeft)) * 0.5);
 		}
 
 		OI.turret.setTurretSpeed(turretPower);
