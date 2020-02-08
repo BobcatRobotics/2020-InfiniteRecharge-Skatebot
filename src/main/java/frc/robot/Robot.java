@@ -35,6 +35,9 @@ public class Robot extends TimedRobot {
     xPress = false;
     yPress = false;
     bPress = false;
+    OI.limelight.setCamMode(camModeStart);
+    OI.limelight.setLedMode(ledModeStart);
+    OI.driveTrain.toggleSqrt();
   }
 
   @Override
@@ -62,8 +65,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    OI.limelight.setCamMode(camModeStart);
-    OI.limelight.setLedMode(ledModeStart);
   }
 
   @Override

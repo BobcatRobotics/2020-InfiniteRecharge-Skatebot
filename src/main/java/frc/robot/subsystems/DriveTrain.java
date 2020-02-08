@@ -29,7 +29,7 @@ public class DriveTrain extends SubsystemBase {
 
     public DriveTrain() {
         // Initialize Drive Train
-        RioLogger.log("DriveTrain() created.");
+        RioLogger.log("DriveTrain created");
 
         leftTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
         leftTalon.setSelectedSensorPosition(0, 0, 0);
@@ -52,30 +52,22 @@ public class DriveTrain extends SubsystemBase {
      */
     public void drive(double leftSpeed, double rightSpeed) {
         if (sqrt) {
-            setSQRTRightPower(rightSpeed);
-            setSQRTLeftPower(leftSpeed);
+            right = setSQRTPower(rightSpeed);
+            left = setSQRTPower(leftSpeed);
         } else {
             right = rightSpeed;
             left = leftSpeed;
         }
 
-        rightTalon.set(right);
+        rightTalon.set(right*-1);
         leftTalon.set(left);
     }
 
-    public void setSQRTRightPower(double rightSpeed) {
-        if (rightSpeed < 0) {
-            right = -1.0 * (Math.sqrt(-1.0 * rightSpeed));
+    public double setSQRTPower(double speed) {
+        if (speed < 0) {
+            return -1.0 * (Math.sqrt(-1.0 * speed));
         } else {
-            right = Math.sqrt(rightSpeed);
-        }
-    }
-
-    public void setSQRTLeftPower(double leftSpeed) {
-        if (leftSpeed < 0) {
-            left = -1.0 * (Math.sqrt(-1.0 * leftSpeed));
-        } else {
-            left = Math.sqrt(leftSpeed);
+            return Math.sqrt(speed);
         }
     }
 
