@@ -5,8 +5,6 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.OI;
-import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
 
 public class Limelight extends SubsystemBase {
@@ -20,13 +18,7 @@ public class Limelight extends SubsystemBase {
     private NetworkTableEntry tx;
     private NetworkTableEntry ty;
     private NetworkTableEntry ta;
-    // private NetworkTableEntry ta0;
-    // private NetworkTableEntry ta1;
-
-    private boolean xPress;
-    private boolean yPress;
-    private boolean bPress;
-
+    
     public enum ledMode {
         PIPELINE(0), OFF(1), BLINK(2), ON(3);
 
@@ -52,9 +44,6 @@ public class Limelight extends SubsystemBase {
         super();
         setCamMode(camModeStart);
         setLedMode(ledModeStart);
-        xPress = false;
-        yPress = false;
-        bPress = false;
 
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
         try {
@@ -62,8 +51,6 @@ public class Limelight extends SubsystemBase {
             tx = limelight.getEntry("tx");
             ty = limelight.getEntry("ty");
             ta = limelight.getEntry("ta");
-            // ta0 = limelight.getEntry("ta0");
-            // ta1 = limelight.getEntry("ta1");
         } catch (Exception e) {
             RioLogger.errorLog("Unable to initialize LimeLight. Error is " + e);
         }
@@ -97,14 +84,6 @@ public class Limelight extends SubsystemBase {
     public double ta() {
         return ta.getDouble(0.0);
     }
-
-    // public double ta1() {
-    // return ta1.getDouble(0.0);
-    // }
-
-    // public double ta0() {
-    // return ta0.getDouble(0.0);
-    // }
 
     /**
      * @return The current mode of the Limelight LEDs.
@@ -201,42 +180,12 @@ public class Limelight extends SubsystemBase {
 
     /**
      * This method is called periodically by the CommandScheduler.
+     * It turns the LEDs off when the Robot is disabled.
      */
     @Override
     public void periodic() {
-        // This block executes periodically during teleoperated mode.
-        if (RobotState.isOperatorControl()) {
-            // Press the B button to switch the camera mode of Limelight.
-            // DRIVER -> VISION
-            if (OI.gamePad.getRawButtonPressed(RobotMap.padB) && !bPress) {
-                bPress = true;
-                switchCamMode();
-            } else {
-                bPress = false;
-            }
-
-            // Press the X Button to switch the LED mode of Limelight.
-            // PIPELINE -> BLINK -> OFF -> ON
-            if (OI.gamePad.getRawButtonPressed(RobotMap.padX) && !xPress) {
-                xPress = true;
-                switchLedMode();
-            } else {
-                xPress = false;
-            }
-
-            // Press the Y Button to switch the LED mode of Limelight from ON and OFF.
-            // Old value -> Off -> On
-            if (OI.gamePad.getRawButtonPressed(RobotMap.padY) && !yPress) {
-                yPress = true;
-                switchLedModeOnOff();
-            } else {
-                yPress = false;
-            }
         // This block executes periodically during disabled mode.
-        } else if (RobotState.isDisabled()) {
-            xPress = false;
-            yPress = false;
-            bPress = false;
+        if (RobotState.isDisabled()) {
             setLedMode(ledMode.OFF);
         }
     }

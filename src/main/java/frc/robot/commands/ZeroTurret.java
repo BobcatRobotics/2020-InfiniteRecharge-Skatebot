@@ -10,7 +10,7 @@ import frc.robot.lib.RioLogger;
 public class ZeroTurret extends CommandBase {
 
     /**
-	 * Initalize the DriveWithJoysticks command
+	 * Initialize the DriveWithJoysticks command
 	 */
 	public ZeroTurret() {
 		super();
@@ -67,9 +67,9 @@ public class ZeroTurret extends CommandBase {
 	public void end(boolean failed) {
 		OI.turret.setTurretSpeed(0.0);
 		if (failed) {
-			RioLogger.log("Driving was interrupted, switch to teleoperated mode to start again");
+			RioLogger.log("Zeroing command was interrupted, switch to teleoperated mode to start again");
 		} else {
-			RioLogger.log("Driving finished, switch to teleoperated mode to start again");
+			RioLogger.log("Zeroing command finished, switch to teleoperated mode to start again");
 		}
 	}
 }

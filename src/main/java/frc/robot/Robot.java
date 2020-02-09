@@ -3,29 +3,38 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.SwitchLimelightMode;
 import frc.robot.commands.TargetEntity;
-import frc.robot.commands.ZeroTurret;;
+import frc.robot.commands.ZeroTurret;
 
 public class Robot extends TimedRobot {
   private DriveWithJoysticks driveWithJoysticks;
+  private SwitchLimelightMode switchLimelightMode;
   private TargetEntity targetEntity;
   private ZeroTurret zeroTurret;
   private CommandScheduler scheduler;
-  private boolean upPress;
 
   @Override
   public void robotInit() {
-    upPress = false;
     scheduler = CommandScheduler.getInstance();
     driveWithJoysticks = new DriveWithJoysticks();
+    switchLimelightMode = new SwitchLimelightMode();
     targetEntity = new TargetEntity();
     zeroTurret = new ZeroTurret();
-    targetEntity.execute();
   }
 
   @Override
   public void robotPeriodic() {
-    // Runs all Commands and Subsystems. ** Needs to called in a periodic block **
+    /*
+     * Runs a single iteration of the scheduler. The execution occurs in the following order: 
+     * Subsystem periodic methods are called. 
+     * Button bindings are polled, and new commands are scheduled from them.
+     * Currently-scheduled commands are executed. 
+     * (What this means is that the code in the execute() block of the Command is executed once)
+     * End conditions are checked on currently-scheduled commands, 
+     * and commands that are finished have their end methods called and are removed. 
+     * Any subsystems not being used as requirements have their default methods started.
+     */
     scheduler.run();
   }
 
@@ -39,19 +48,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    scheduler.schedule(driveWithJoysticks);
-    scheduler.schedule(zeroTurret);
+    // Schedules the commands to execute during teloperated mode
+    driveWithJoysticks.schedule();
+    switchLimelightMode.schedule();
+    targetEntity.schedule();
+    zeroTurret.schedule();
   }
 
   @Override
   public void teleopPeriodic() {
-    // Press the Up arrow on the POV to schedule the TargetEntity Command
-    if (!upPress && OI.gamePad.getPOV(RobotMap.pov) == RobotMap.povUp && !scheduler.isScheduled(targetEntity)) {
-      upPress = true;
-      targetEntity.schedule();
-    } else {
-      upPress = false;
-    }
   }
 
   @Override
@@ -60,6 +65,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+  }
+
+  @Override
+  public void testInit() {
   }
 
   @Override

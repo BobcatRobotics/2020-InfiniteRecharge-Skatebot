@@ -10,7 +10,7 @@ import frc.robot.lib.RioLogger;
 public class DriveWithJoysticks extends CommandBase {
     
     /**
-	 * Initalize the DriveWithJoysticks command
+	 * Initialize the DriveWithJoysticks command
 	 */
 	public DriveWithJoysticks() {
 		super();
@@ -67,9 +67,9 @@ public class DriveWithJoysticks extends CommandBase {
 	public void end(boolean failed) {
 		OI.driveTrain.stop();
 		if (failed) {
-			RioLogger.log("Driving was interrupted, switch to teleoperated mode to start again");
+			RioLogger.log("Driving command was interrupted, switch to teleoperated mode to start again");
 		} else {
-			RioLogger.log("Driving finished, switch to teleoperated mode to start again");
+			RioLogger.log("Driving command finished, switch to teleoperated mode to start again");
 		}
 	}
 }
