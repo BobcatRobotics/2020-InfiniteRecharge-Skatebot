@@ -14,10 +14,8 @@ public class Robot extends TimedRobot {
   // The mode that Limelight's LED's will start in
   private final ledMode ledModeStart = ledMode.OFF;
 
-  private static final CommandScheduler schedule = CommandScheduler.getInstance();
-
-  private final TargetEntity targetEntity = new TargetEntity();
-
+  private TargetEntity targetEntity;
+  private CommandScheduler schedule;
   private boolean xPress;
   private boolean yPress;
   private boolean bPress;
@@ -29,6 +27,9 @@ public class Robot extends TimedRobot {
     yPress = false;
     bPress = false;
     upPress = false;
+    schedule = CommandScheduler.getInstance();
+    targetEntity = new TargetEntity();
+    targetEntity.execute();
 
     OI.limelight.setCamMode(camModeStart);
     OI.limelight.setLedMode(ledModeStart);
