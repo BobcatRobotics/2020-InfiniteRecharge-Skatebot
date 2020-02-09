@@ -4,9 +4,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.OI;
+import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
 
 public class Turret extends SubsystemBase {
@@ -20,6 +22,7 @@ public class Turret extends SubsystemBase {
 
     public Turret() {
         // Initialize Turret
+        super();
         stick = 0.0;
         velocity = 0.0;
         distance = 0.0;
@@ -89,5 +92,29 @@ public class Turret extends SubsystemBase {
      */
     public void setTurretSpeed(double value) {
         OI.turretTalon.set(ControlMode.PercentOutput, value);
+    }
+
+    /**
+     * This method is called periodically by the CommandScheduler.
+     */
+    @Override
+    public void periodic() {
+        // This block executes periodically during teleoperated mode.
+        if (RobotState.isOperatorControl()) {
+            // Press the left button to zero the turret.
+            // This makes it unwind the cables and spin back into the defined zero position.
+            SmartDashboard.putBoolean("Can Zero Turret:", canZeroTurret());
+            if (OI.gamePad.getRawButton(RobotMap.leftButton) && canZeroTurret()) {
+                // Checks if the turret is within 250 distance of the zero point
+                // If the turret is, it will not zero the turret
+                zeroTurret();
+            } else {
+                updateTalonSpeed();
+            }
+            updateAndShowValues();
+        // This block executes periodically during test mode.
+        } else if (RobotState.isTest()) {
+            updateAndShowValues();
+        }
     }
 }

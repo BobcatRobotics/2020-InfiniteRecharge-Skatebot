@@ -3,9 +3,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.OI;
+import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
 
 public class DriveTrain extends SubsystemBase {
@@ -25,8 +27,13 @@ public class DriveTrain extends SubsystemBase {
     private double leftDistance = 0.0;
     private double rightDistance = 0.0;
 
+    private boolean zeroDrive = OI.gamePad.getRawButton(RobotMap.rightButton);
+
     public DriveTrain() {
         // Initialize Drive Train
+        super();
+        // Sets square root scaling of the speed of the drive train to false
+        sqrtSpeeds = false;
         RioLogger.log("DriveTrain created");
 
         leftTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
@@ -108,5 +115,29 @@ public class DriveTrain extends SubsystemBase {
         SmartDashboard.putNumber("left velocity:", leftVelocity);
         SmartDashboard.putNumber("right distance:", rightDistance);
         SmartDashboard.putNumber("right velocity:", rightVelocity);
+    }
+
+    /**
+     * This method is called periodically by the CommandScheduler. 
+     */
+    @Override
+    public void periodic() {
+        // This block executes periodically during teleoperated mode.
+        if (RobotState.isOperatorControl()) {
+            // Press the right button to set the zero position of the turret.
+            // Also stops the drive train.
+            SmartDashboard.putBoolean("Zero Drive:", zeroDrive);
+            if (zeroDrive) {
+                // Defines the zero position of the turret
+                OI.turret.zeroDrive();
+                stop();
+            } else {
+                drive();
+            }
+            updateAndShowValues();
+        // This block executes periodically during test mode.
+        } else if (RobotState.isTest()) {
+            updateAndShowValues();
+        }
     }
 }

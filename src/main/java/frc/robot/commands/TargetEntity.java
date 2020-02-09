@@ -51,7 +51,7 @@ public class TargetEntity extends CommandBase {
 	*/
 
 	/**
-	 * Execute one itteration of the TargetEntity command (For multiple itterations, call multiple times)
+	 * Execute one iteration of the TargetEntity command (For multiple iterations, call multiple times)
 	 */
 	@Override
 	public void execute() {
@@ -66,9 +66,9 @@ public class TargetEntity extends CommandBase {
 			// The number of degrees Limelight needs to shift by to be centered
 			double degreesToCenter = -x;
 
-			/*Instead of waiting for the target to go off the screen, center the target
-			This value will be negative if it needs to go right and positive if it needs to go left
-			We multiply by a constant because the motor doesn't need that much power so it doesn't go way too fast*/
+			// Instead of waiting for the target to go off the screen, center the target
+			// This value will be negative if it needs to go right and positive if it needs to go left
+			// We multiply by a constant because the motor doesn't need that much power so it doesn't go way too fast
 			power = Kp * degreesToCenter;
 			// If the power is too small and tx is within the threshold,
 			// increase it to +/- 0.05 so the turret actually moves
@@ -105,6 +105,7 @@ public class TargetEntity extends CommandBase {
 		SmartDashboard.putNumber("Target.Power", power);
 		SmartDashboard.putNumber("Target.AddPower", additionalPower);
 		SmartDashboard.putNumber("Target.TurretPower", turretPower);
+		SmartDashboard.putNumber("GamePad.dpad", OI.gamePad.getPOV(RobotMap.dpad));
 	}
 
 	/**
@@ -113,7 +114,7 @@ public class TargetEntity extends CommandBase {
 	@Override
 	public boolean isFinished() {
 		// Press the Down arrow on the D-pad to end the command
-		if (OI.gamePad.getPOV(RobotMap.pov) == RobotMap.povDown) {
+		if (OI.gamePad.getPOV(RobotMap.dpad) == RobotMap.dpadDown) {
 			return true;
 		}
 		return false;
