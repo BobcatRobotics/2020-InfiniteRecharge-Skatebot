@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,15 +7,13 @@ import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 
 public class DriveTrain extends SubsystemBase {
-    private final WPI_TalonSRX leftTalon = OI.leftTalon;
-    private final WPI_TalonSRX rightTalon = OI.rightTalon;
-
     private double leftStick = 0.0;
     private double rightStick = 0.0;
 
-    private double rightSpeed = 0.0;
     private double leftSpeed = 0.0;
-    private boolean sqrtSpeeds = true;
+    private double rightSpeed = 0.0;
+    // Whether or not to square root the speed of the drive train
+    private boolean sqrtSpeeds;
 
     private double leftVelocity = 0.0;
     private double rightVelocity = 0.0;
@@ -28,17 +24,16 @@ public class DriveTrain extends SubsystemBase {
     public DriveTrain() {
         // Initialize Drive Train
         super();
-        // Sets square root scaling of the speed of the drive train to false
         sqrtSpeeds = false;
         RioLogger.log("DriveTrain created");
 
-        leftTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
-        leftTalon.setSelectedSensorPosition(0, 0, 0);
-        leftTalon.setSensorPhase(true);
+        OI.leftTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
+        OI.leftTalon.setSelectedSensorPosition(0, 0, 0);
+        OI.leftTalon.setSensorPhase(true);
 
-        rightTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
-        rightTalon.setSelectedSensorPosition(0, 0, 0);
-        rightTalon.setSensorPhase(true);
+        OI.rightTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
+        OI.rightTalon.setSelectedSensorPosition(0, 0, 0);
+        OI.rightTalon.setSensorPhase(true);
     }
 
     /**
@@ -62,8 +57,8 @@ public class DriveTrain extends SubsystemBase {
             leftSpeed = left;
         }
 
-        rightTalon.set(rightSpeed);
-        leftTalon.set(leftSpeed);
+        OI.rightTalon.set(rightSpeed);
+        OI.leftTalon.set(leftSpeed);
     }
 
     /**
@@ -98,11 +93,11 @@ public class DriveTrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        leftDistance = leftTalon.getSelectedSensorPosition(0);
-        rightDistance = rightTalon.getSelectedSensorPosition(0);
+        leftDistance = OI.leftTalon.getSelectedSensorPosition(0);
+        rightDistance = OI.rightTalon.getSelectedSensorPosition(0);
 
-        leftVelocity = leftTalon.getSelectedSensorVelocity(0);
-        rightVelocity = rightTalon.getSelectedSensorVelocity(0);
+        leftVelocity = OI.leftTalon.getSelectedSensorVelocity(0);
+        rightVelocity = OI.rightTalon.getSelectedSensorVelocity(0);
 
         leftStick = OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value);
         rightStick = OI.rightJoystick.getRawAxis(Joystick.AxisType.kY.value);

@@ -62,6 +62,7 @@ public class ZeroTurret extends CommandBase {
 
 	/**
 	 * Ends the command and stops moving the turret. Prints if it was interrupted.
+     * @param failed Whether the command was interrupted/canceled
 	 */
 	@Override
 	public void end(boolean failed) {

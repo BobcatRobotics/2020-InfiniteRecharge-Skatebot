@@ -8,15 +8,16 @@ import frc.robot.commands.TargetEntity;
 import frc.robot.commands.ZeroTurret;
 
 public class Robot extends TimedRobot {
+  private CommandScheduler scheduler;
   private DriveWithJoysticks driveWithJoysticks;
   private SwitchLimelightMode switchLimelightMode;
   private TargetEntity targetEntity;
   private ZeroTurret zeroTurret;
-  private CommandScheduler scheduler;
 
   @Override
   public void robotInit() {
     scheduler = CommandScheduler.getInstance();
+    // Initializes the commands
     driveWithJoysticks = new DriveWithJoysticks();
     switchLimelightMode = new SwitchLimelightMode();
     targetEntity = new TargetEntity();
@@ -48,7 +49,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // Schedules the commands to execute during teloperated mode
+    /*
+     * This schedules the commands that execute during teleoperated mode. 
+     * All logic is handled inside their seperate files.
+     * When a command is scheduled, its execute() method will run repeatedly.
+     * (Note: Calling an execute() method once does not mean that 
+     * it will "complete" the command, it has to be called periodically)
+     */
     driveWithJoysticks.schedule();
     switchLimelightMode.schedule();
     targetEntity.schedule();

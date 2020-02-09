@@ -58,6 +58,12 @@ public class TargetEntity extends CommandBase {
 	5. Print the values to SmartDashboard
 	*/
 
+	/**
+	 * Updates if the command is enabled or not from the gamepad.
+	 * <p>Note: Ending the command not the same as disabling the command. When the command
+	 * is disabled, it can be enabled by pressing the up arrow on the POV.
+	 * When it is finished, it has to be re-scheduled with the CommandScheduler.
+	 */
 	private void checkIfEnabled() {
 		// Press the Up arrow on the POV to enable the TargetEntity Command
 		if (OI.gamePad.getPOV(RobotMap.pov) == RobotMap.povUp) {
@@ -139,6 +145,9 @@ public class TargetEntity extends CommandBase {
 
 	/**
 	 * If the robot switches out of teleoperated mode, the command is done.
+	 * <p>Note: This is not the same as disabling the command. When the command
+	 * is disabled, it can be enabled by pressing the up arrow on the POV.
+	 * When it is finished, it has to be re-scheduled with the CommandScheduler.
 	 */
 	@Override
 	public boolean isFinished() {
@@ -151,6 +160,7 @@ public class TargetEntity extends CommandBase {
 	/**
 	 * Stops having the ability to target and turns off the LEDs so people don't get blinded. 
 	 * Prints whether the command was interrupted or not.
+	 * @param failed Whether the command was interrupted/canceled
 	 */
 	@Override
 	public void end(boolean failed) {

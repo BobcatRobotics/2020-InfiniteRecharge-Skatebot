@@ -100,6 +100,9 @@ public class Limelight extends SubsystemBase {
         return ledMode.ON;
     }
 
+    /**
+     * @return the LED mode in the network tables
+     */
     private NetworkTableEntry getLedModeEntry() {
         return limelight.getEntry("ledMode");
     }
@@ -123,6 +126,9 @@ public class Limelight extends SubsystemBase {
         return camMode.DRIVER;
     }
 
+    /**
+     * @return the LED mode in the network tables
+     */
     private NetworkTableEntry getCamModeEntry() {
         return limelight.getEntry("camMode");
     }

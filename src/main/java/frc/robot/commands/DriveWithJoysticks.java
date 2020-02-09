@@ -51,6 +51,7 @@ public class DriveWithJoysticks extends CommandBase {
 
     /**
 	 * If the robot switches out of teleoperated mode, the command is done.
+     * @return Whether the command is finished.
 	 */
 	@Override
 	public boolean isFinished() {
@@ -62,6 +63,7 @@ public class DriveWithJoysticks extends CommandBase {
 
 	/**
 	 * Ends the command and stops driving. Prints if it was interrupted.
+     * @param failed Whether the command was interrupted/canceled
 	 */
 	@Override
 	public void end(boolean failed) {

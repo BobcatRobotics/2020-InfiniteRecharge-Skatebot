@@ -85,6 +85,7 @@ public class SwitchLimelightMode extends CommandBase {
 
 	/**
 	 * Ends the command and stops being able to switch modes. Prints if it was interrupted.
+     * @param failed Whether the command was interrupted/canceled
 	 */
 	@Override
 	public void end(boolean failed) {
