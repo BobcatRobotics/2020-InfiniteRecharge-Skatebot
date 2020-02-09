@@ -34,7 +34,7 @@ public class TargetEntity extends CommandBase {
 	}
 
 	/*
-	1. Turns on LimeLight's LED's and starts it's targeting
+	1. Turns on LimeLight's LEDs and starts its targeting
 	2. If LimeLight doesn't have a target, then set power, additionalPower, and turretPower to 0.0
 	3. If LimeLight does have a target, then:
 		1. Get the tx value from NetworkTables.
@@ -105,7 +105,7 @@ public class TargetEntity extends CommandBase {
 		SmartDashboard.putNumber("Target.Power", power);
 		SmartDashboard.putNumber("Target.AddPower", additionalPower);
 		SmartDashboard.putNumber("Target.TurretPower", turretPower);
-		SmartDashboard.putNumber("GamePad.dpad", OI.gamePad.getPOV(RobotMap.dpad));
+		SmartDashboard.putNumber("GamePad.POV", OI.gamePad.getPOV(RobotMap.pov));
 	}
 
 	/**
@@ -113,22 +113,22 @@ public class TargetEntity extends CommandBase {
 	 */
 	@Override
 	public boolean isFinished() {
-		// Press the Down arrow on the D-pad to end the command
-		if (OI.gamePad.getPOV(RobotMap.dpad) == RobotMap.dpadDown) {
+		// Press the Down arrow on the POV to end the command
+		if (OI.gamePad.getPOV(RobotMap.pov) == RobotMap.povDown) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Turn off the LED's so people don't get blinded
-	 * Print whether the command was interupted or not
+	 * Turns off the LEDs so people don't get blinded.
+	 * Prints whether the command was interupted or not.
 	 */
 	@Override
 	public void end(boolean failed) {
 		OI.limelight.setLedMode(ledMode.OFF);
 		if (failed) {
-			RioLogger.log("Tracking was interupted, press the up button on the POV to start again");
+			RioLogger.log("Tracking was interrupted, press the up button on the POV to start again");
 		} else {
 			RioLogger.log("Tracking finished, press the up button on the POV to start again");
 		}

@@ -17,7 +17,7 @@ public class RobotMap {
     public static final int leftButton = 5;
     public static final int rightButton = 6;
 
-    public static final int dpad = 0;
-    public static final int dpadUp = 0;
-    public static final int dpadDown = 180;
+    public static final int pov = 0;
+    public static final int povUp = 0;
+    public static final int povDown = 180;
 }

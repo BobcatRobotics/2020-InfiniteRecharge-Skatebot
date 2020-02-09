@@ -4,11 +4,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.OI;
-import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
 
 public class Turret extends SubsystemBase {
@@ -63,19 +61,6 @@ public class Turret extends SubsystemBase {
     }
 
     /**
-     * Updates the turret.stick, turret.distance, and turret.velocity values.
-     */
-    public void updateAndShowValues() {
-        stick = -(OI.gamePad.getX(Hand.kLeft));
-        distance = OI.turretTalon.getSelectedSensorPosition(0);
-        velocity = OI.turretTalon.getSelectedSensorVelocity(0);
-
-        SmartDashboard.putNumber("turret stick:", stick);
-        SmartDashboard.putNumber("turret distance:", distance);
-        SmartDashboard.putNumber("turret velocity:", velocity);
-    }
-
-    /**
      * Sets the speed of the turret talon to the turret stick value.
      * (Divided by 2 so it doesn't go too fast.)
      */
@@ -96,25 +81,16 @@ public class Turret extends SubsystemBase {
 
     /**
      * This method is called periodically by the CommandScheduler.
+     * Updates the turret.stick, turret.distance, and turret.velocity values.
      */
     @Override
     public void periodic() {
-        // This block executes periodically during teleoperated mode.
-        if (RobotState.isOperatorControl()) {
-            // Press the left button to zero the turret.
-            // This makes it unwind the cables and spin back into the defined zero position.
-            SmartDashboard.putBoolean("Can Zero Turret:", canZeroTurret());
-            if (OI.gamePad.getRawButton(RobotMap.leftButton) && canZeroTurret()) {
-                // Checks if the turret is within 250 distance of the zero point
-                // If the turret is, it will not zero the turret
-                zeroTurret();
-            } else {
-                updateTalonSpeed();
-            }
-            updateAndShowValues();
-        // This block executes periodically during test mode.
-        } else if (RobotState.isTest()) {
-            updateAndShowValues();
-        }
+        stick = -(OI.gamePad.getX(Hand.kLeft));
+        distance = OI.turretTalon.getSelectedSensorPosition(0);
+        velocity = OI.turretTalon.getSelectedSensorVelocity(0);
+
+        SmartDashboard.putNumber("turret stick:", stick);
+        SmartDashboard.putNumber("turret distance:", distance);
+        SmartDashboard.putNumber("turret velocity:", velocity);
     }
 }
