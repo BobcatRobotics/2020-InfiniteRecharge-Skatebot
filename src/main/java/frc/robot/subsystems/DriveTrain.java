@@ -88,7 +88,7 @@ public class DriveTrain extends SubsystemBase {
 
     /**
      * This method is called periodically by the CommandScheduler.
-     * Updates velocity and stick values and puts them on the SmartDashboard.
+     * Updates speed and stick values and puts them on the SmartDashboard.
      */
     @Override
     public void periodic() {
