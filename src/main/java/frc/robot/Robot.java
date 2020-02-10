@@ -9,7 +9,7 @@ public class Robot extends TimedRobot {
   private DriveWithJoysticks driveWithJoysticks;
   private SwitchLimelightMode switchLimelightMode;
   private TargetEntity targetEntity;
-  private ZeroTurret zeroTurret;
+  private ZeroLimelight zeroLimelight;
 
   @Override
   public void robotInit() {
@@ -18,7 +18,7 @@ public class Robot extends TimedRobot {
     driveWithJoysticks = new DriveWithJoysticks();
     switchLimelightMode = new SwitchLimelightMode();
     targetEntity = new TargetEntity();
-    zeroTurret = new ZeroTurret();
+    zeroLimelight = new ZeroLimelight();
   }
 
   @Override
@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
     driveWithJoysticks.schedule();
     switchLimelightMode.schedule();
     targetEntity.schedule();
-    zeroTurret.schedule();
+    zeroLimelight.schedule();
   }
 
   @Override

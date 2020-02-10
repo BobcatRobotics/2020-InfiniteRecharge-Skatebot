@@ -7,12 +7,12 @@ import frc.robot.OI;
 import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
 
-public class ZeroTurret extends CommandBase {
+public class ZeroLimelight extends CommandBase {
 
     /**
-	 * Initialize the DriveWithJoysticks command
+	 * Initialize the ZeroLimelight command
 	 */
-	public ZeroTurret() {
+	public ZeroLimelight() {
 		super();
         addRequirements(OI.turret);
 		RioLogger.log("Zeroing started");
@@ -22,7 +22,7 @@ public class ZeroTurret extends CommandBase {
     1. Returns the limelight camera to the defined zero position on the turret and also makes the turret spin
     2. If the left button on the game pad is pressed, it stores that value in a boolean and displays it on SmartDashboard
     3. If it is pressed, then:
-        1. It checks if the turret is within the threshold (250) to be able to zero the turret
+        1. It checks if the turret is within the threshold (250) to be able to zero the Limelight camera
         2. If it is, then it moves the camera back to the defined zero position
         3. It will unwind the cables as it is doing this
     4. If it is not pressed, then:
@@ -37,13 +37,13 @@ public class ZeroTurret extends CommandBase {
 	 */
     @Override
     public void execute() {
-        // Press the left button to zero the turret.
+        // Press the left button to zero the Limelight camera.
         // This makes it unwind the cables and spin back into the defined zero position.
-        SmartDashboard.putBoolean("Can Zero Turret:", OI.turret.canZeroTurret());
-        if (OI.gamePad.getRawButton(RobotMap.leftButton) && OI.turret.canZeroTurret()) {
+        SmartDashboard.putBoolean("Can Zero Limelight:", OI.turret.canZeroLimelight());
+        if (OI.gamePad.getRawButton(RobotMap.leftButton) && OI.turret.canZeroLimelight()) {
             // Checks if the turret is within 250 distance of the zero point
-            // If the turret is, it will not zero the turret
-            OI.turret.zeroTurret();
+            // If the turret is, it will not zero the Limelight camera
+            OI.turret.zeroLimelight();
         } else {
             OI.turret.updateTalonSpeed();
         }

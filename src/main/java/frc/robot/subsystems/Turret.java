@@ -27,34 +27,34 @@ public class Turret extends SubsystemBase {
         velocity = 0.0;
         distance = 0.0;
 
-        OI.turretTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
-        OI.turretTalon.setSelectedSensorPosition(0, 0, 0);
+        OI.turretTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
+        OI.turretTalon.setSelectedSensorPosition(0);
         OI.turretTalon.setSensorPhase(false);
 
         RioLogger.log("Turret created");
     }
 
     /**
-     * Sets the turret.distance to zero. When using the zeroTurret() method, it will
-     * send the turret back to this position.
+     * Sets the turret.distance to zero. When using the zeroLimelight() method, it will
+     * send the Limelight camera back to this position.
      */
-    public void zeroDrive() {
+    public void defineZeroPosition() {
         OI.turretTalon.setSelectedSensorPosition(0);
         distance = 0.0;
     }
 
     /**
      * @return Boolean value representing if the turret is in a position that can use the
-     * zeroTurret() method. It checks if it is within 250 distance of the zero position.
+     * zeroLimelight() method. It checks if the Limelight camera is within 250 distance of the zero position.
      */
-    public boolean canZeroTurret() {
+    public boolean canZeroLimelight() {
         return (Math.abs(distance) > zeroThreshold);
     }
 
     /**
-     * Moves the turret back to the defined zero position set by the zeroDrive() method.
+     * Moves the Limelight camera back to the defined zero position set by the defineZeroPosition() method.
      */
-    public void zeroTurret() {
+    public void zeroLimelight() {
         if (distance > -(zeroThreshold)) {
             setTurretSpeed(-(Math.abs(stick) * 0.5) + 0.1);
         } else {

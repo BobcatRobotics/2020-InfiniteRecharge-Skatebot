@@ -42,7 +42,7 @@ public class DriveWithJoysticks extends CommandBase {
         SmartDashboard.putBoolean("Zero Drive:", OI.gamePad.getRawButton(RobotMap.rightButton));
         if (OI.gamePad.getRawButton(RobotMap.rightButton)) {
             // Defines the zero position of the turret
-            OI.turret.zeroDrive();
+            OI.turret.defineZeroPosition();
             OI.driveTrain.stop();
         } else {
             OI.driveTrain.drive();

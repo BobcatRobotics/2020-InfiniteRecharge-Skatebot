@@ -26,12 +26,12 @@ public class DriveTrain extends SubsystemBase {
         sqrtSpeeds = false;
         RioLogger.log("DriveTrain created");
 
-        OI.leftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
-        OI.leftTalon.setSelectedSensorPosition(0, 0, 0);
+        OI.leftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
+        OI.leftTalon.setSelectedSensorPosition(0);
         OI.leftTalon.setSensorPhase(true);
 
-        OI.rightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
-        OI.rightTalon.setSelectedSensorPosition(0, 0, 0);
+        OI.rightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
+        OI.rightTalon.setSelectedSensorPosition(0);
         OI.rightTalon.setSensorPhase(true);
     }
 
