@@ -11,7 +11,7 @@ import frc.robot.subsystems.Limelight.camMode;
 import frc.robot.subsystems.Limelight.ledMode;
 
 public class TargetEntity extends CommandBase {
-	private static final double Kp = 0.025; // Proportional control constant to determine the power
+	private static final double powerConstant = 0.025; // Proportional control constant to determine the power
 	private static final double minimumPower = 0.05; // If the power is any less than this minimumPower the turret may not actually move
 	private static final double threshold = 0.15; // The threshold in which the turret actually needs to move
 
@@ -59,7 +59,8 @@ public class TargetEntity extends CommandBase {
 	*/
 
 	/**
-	 * Updates if the command is enabled or not from the gamepad.
+	 * Updates if the command is enabled or not from the gamepad
+	 *
 	 * <p>Note: Ending the command not the same as disabling the command. When the command
 	 * is disabled, it can be enabled by pressing the up arrow on the POV.
 	 * When it is finished, it has to be re-scheduled with the CommandScheduler.
@@ -98,7 +99,7 @@ public class TargetEntity extends CommandBase {
 				// This value will be negative if it needs to go right and positive if it needs to go left
 				// We multiply by a constant because the motor doesn't need that much power so
 				// it doesn't go way too fast
-				power = Kp * degreesToCenter;
+				power = powerConstant * degreesToCenter;
 				// If the power is too small and tx is within the threshold,
 				// increase it to +/- 0.05 so the turret actually moves
 				if (x > threshold && power > -minimumPower) {
