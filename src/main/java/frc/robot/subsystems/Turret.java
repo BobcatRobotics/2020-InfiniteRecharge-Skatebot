@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -18,6 +17,9 @@ public class Turret extends SubsystemBase {
     private double velocity;
     private double distance;
 
+    /**
+     * This class contains the methods for rotating the turret and moving Limelight around.
+     */
     public Turret() {
         // Initialize Turret
         super();
@@ -76,7 +78,7 @@ public class Turret extends SubsystemBase {
      * Positive values make it spin clockwise.
      */
     public void setTurretSpeed(double value) {
-        OI.turretTalon.set(ControlMode.PercentOutput, value);
+        OI.turretTalon.set(value);
     }
 
     /**

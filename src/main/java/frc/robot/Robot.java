@@ -2,10 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.DriveWithJoysticks;
-import frc.robot.commands.SwitchLimelightMode;
-import frc.robot.commands.TargetEntity;
-import frc.robot.commands.ZeroTurret;
+import frc.robot.commands.*;
 
 public class Robot extends TimedRobot {
   private CommandScheduler scheduler;
@@ -53,6 +50,7 @@ public class Robot extends TimedRobot {
      * This schedules the commands that execute during teleoperated mode. 
      * All logic is handled inside their seperate files.
      * When a command is scheduled, its execute() method will run repeatedly.
+     * These commands allow driving, switching Limelight modes, targeting, and moving the turret.
      * (Note: Calling an execute() method once does not mean that 
      * it will "complete" the command, it has to be called periodically)
      */

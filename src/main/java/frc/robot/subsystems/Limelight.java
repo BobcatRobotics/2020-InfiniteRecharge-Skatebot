@@ -39,6 +39,9 @@ public class Limelight extends SubsystemBase {
         }
     }
 
+    /**
+     * This class contains the methods for the Limelight camera and LEDs.
+     */
     public Limelight() {
         // Initialize Limelight
         super();
@@ -151,7 +154,7 @@ public class Limelight extends SubsystemBase {
         } else {
             setCamMode(camMode.DRIVER);
         }
-        System.out.println("camMode: " + getCamMode().name());
+        RioLogger.log("camMode: " + getCamMode().name());
     }
 
     /**
@@ -168,7 +171,7 @@ public class Limelight extends SubsystemBase {
         } else {
             setLedMode(ledMode.PIPELINE);
         }
-        System.out.println("ledMode: " + getLedMode().name());
+        RioLogger.log("ledMode: " + getLedMode().name());
     }
 
     /**
@@ -181,7 +184,7 @@ public class Limelight extends SubsystemBase {
         } else {
             setLedMode(ledMode.OFF);
         }
-        System.out.println("ledMode: " + getLedMode().name());
+        RioLogger.log("ledMode: " + getLedMode().name());
     }
 
     /**

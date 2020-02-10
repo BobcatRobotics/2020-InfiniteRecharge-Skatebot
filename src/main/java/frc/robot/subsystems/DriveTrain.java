@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,23 +17,20 @@ public class DriveTrain extends SubsystemBase {
     // Whether or not to square root the speed of the drive train
     private boolean sqrtSpeeds;
 
-    private double leftVelocity = 0.0;
-    private double rightVelocity = 0.0;
-
-    private double leftDistance = 0.0;
-    private double rightDistance = 0.0;
-
+    /**
+     * This class contains the methods for driving Skatebot.
+     */
     public DriveTrain() {
         // Initialize Drive Train
         super();
         sqrtSpeeds = false;
         RioLogger.log("DriveTrain created");
 
-        OI.leftTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
+        OI.leftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
         OI.leftTalon.setSelectedSensorPosition(0, 0, 0);
         OI.leftTalon.setSensorPhase(true);
 
-        OI.rightTalon.configSelectedFeedbackSensor(OI.magEncoder, 0, 0);
+        OI.rightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
         OI.rightTalon.setSelectedSensorPosition(0, 0, 0);
         OI.rightTalon.setSensorPhase(true);
     }
@@ -89,24 +88,19 @@ public class DriveTrain extends SubsystemBase {
 
     /**
      * This method is called periodically by the CommandScheduler.
-     * Updates distance, velocity, and stick values and puts them on the SmartDashboard.
+     * Updates velocity and stick values and puts them on the SmartDashboard.
      */
     @Override
     public void periodic() {
-        leftDistance = OI.leftTalon.getSelectedSensorPosition(0);
-        rightDistance = OI.rightTalon.getSelectedSensorPosition(0);
-
-        leftVelocity = OI.leftTalon.getSelectedSensorVelocity(0);
-        rightVelocity = OI.rightTalon.getSelectedSensorVelocity(0);
+        leftSpeed = OI.leftTalon.getSelectedSensorVelocity(0);
+        rightSpeed = OI.rightTalon.getSelectedSensorVelocity(0);
 
         leftStick = OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value);
         rightStick = OI.rightJoystick.getRawAxis(Joystick.AxisType.kY.value);
 
         SmartDashboard.putNumber("left stick:", leftStick);
         SmartDashboard.putNumber("right stick:", rightStick);
-        SmartDashboard.putNumber("left distance:", leftDistance);
-        SmartDashboard.putNumber("left velocity:", leftVelocity);
-        SmartDashboard.putNumber("right distance:", rightDistance);
-        SmartDashboard.putNumber("right velocity:", rightVelocity);
+        SmartDashboard.putNumber("left speed:", leftSpeed);
+        SmartDashboard.putNumber("right soeed:", rightSpeed);
     }
 }
