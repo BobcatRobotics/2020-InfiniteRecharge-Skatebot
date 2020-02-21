@@ -15,7 +15,6 @@ public class DriveWithJoysticks extends CommandBase {
 	public DriveWithJoysticks() {
 		super();
         addRequirements(OI.driveTrain);
-        addRequirements(OI.turret);
 		RioLogger.log("Driving started");
     }
 
@@ -42,7 +41,6 @@ public class DriveWithJoysticks extends CommandBase {
         SmartDashboard.putBoolean("Zero Drive:", OI.gamePad.getRawButton(RobotMap.rightButton));
         if (OI.gamePad.getRawButton(RobotMap.rightButton)) {
             // Defines the zero position of the turret
-            OI.turret.defineZeroPosition();
             OI.driveTrain.stop();
         } else {
             OI.driveTrain.drive();

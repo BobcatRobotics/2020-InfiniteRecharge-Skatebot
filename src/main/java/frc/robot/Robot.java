@@ -13,9 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   private CommandScheduler scheduler;
   private DriveWithJoysticks driveWithJoysticks;
-  private SwitchLimelightMode switchLimelightMode;
-  private TargetEntity targetEntity;
-  private ZeroLimelight zeroLimelight;
   private NavxGyro navx;
 
   @Override
@@ -23,9 +20,6 @@ public class Robot extends TimedRobot {
     scheduler = CommandScheduler.getInstance();
     // Initializes the commands
     driveWithJoysticks = new DriveWithJoysticks();
-    switchLimelightMode = new SwitchLimelightMode();
-    targetEntity = new TargetEntity();
-    zeroLimelight = new ZeroLimelight();
     navx = new NavxGyro(SPI.Port.kMXP);
   }
 
@@ -63,15 +57,12 @@ public class Robot extends TimedRobot {
      * it will "complete" the command, it has to be called periodically)
      */
     driveWithJoysticks.schedule();
-    switchLimelightMode.schedule();
-    targetEntity.schedule();
-    zeroLimelight.schedule();
   }
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("Quaternion X", navx.getQuaternionX());
-    SmartDashboard.putNumber("Quaternion Y", navx.getQuaternionY());
+    //SmartDashboard.putNumber("Quaternion X", navx.getQuaternionX());
+    //SmartDashboard.putNumber("Quaternion Y", navx.getQuaternionY());
   }
 
   @Override

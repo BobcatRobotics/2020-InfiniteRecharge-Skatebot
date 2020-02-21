@@ -4,12 +4,11 @@ public class RobotMap {
     // speed controller mappings
     public static final int leftTalon = 7;
     public static final int rightTalon = 8;
-    public static final int turretTalon = 10;
 
     // input device mappings
-    public static final int leftJoystick = 0;
-    public static final int rightJoystick = 1;
-    public static final int gamePad = 2;
+    public static final int leftJoystick = 1;
+    public static final int rightJoystick = 2;
+    public static final int gamePad = 0;
 
     // game pad button mappings
     public static final int padA = 1;
