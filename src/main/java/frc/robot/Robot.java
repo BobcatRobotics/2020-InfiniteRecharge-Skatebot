@@ -4,12 +4,19 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.*;
 
+import frc.robot.lib.RioLogger;
+import frc.robot.subsystems.NavxGyro;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Robot extends TimedRobot {
   private CommandScheduler scheduler;
   private DriveWithJoysticks driveWithJoysticks;
   private SwitchLimelightMode switchLimelightMode;
   private TargetEntity targetEntity;
   private ZeroLimelight zeroLimelight;
+  private NavxGyro navx;
 
   @Override
   public void robotInit() {
@@ -19,6 +26,7 @@ public class Robot extends TimedRobot {
     switchLimelightMode = new SwitchLimelightMode();
     targetEntity = new TargetEntity();
     zeroLimelight = new ZeroLimelight();
+    navx = new NavxGyro(SPI.Port.kMXP);
   }
 
   @Override
@@ -62,6 +70,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("Quaternion X", navx.getQuaternionX());
+    SmartDashboard.putNumber("Quaternion Y", navx.getQuaternionY());
   }
 
   @Override

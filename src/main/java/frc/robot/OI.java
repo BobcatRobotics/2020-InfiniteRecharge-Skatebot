@@ -21,4 +21,7 @@ public class OI {
     public static final DriveTrain driveTrain = new DriveTrain();
     public static final Limelight limelight = new Limelight();
     public static final Turret turret = new Turret();
+
+    // Gyro
+    public static NavxGyro gyro;
 }
