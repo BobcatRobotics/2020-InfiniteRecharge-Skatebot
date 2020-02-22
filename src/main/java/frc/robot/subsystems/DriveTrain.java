@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.OI;
@@ -92,11 +92,11 @@ public class DriveTrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        leftSpeed = OI.leftTalon.getSelectedSensorVelocity(0);
-        rightSpeed = OI.rightTalon.getSelectedSensorVelocity(0);
+        leftSpeed = OI.leftTalon.getSelectedSensorVelocity();
+        rightSpeed = OI.rightTalon.getSelectedSensorVelocity();
 
-        leftStick = OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value);
-        rightStick = OI.rightJoystick.getRawAxis(Joystick.AxisType.kY.value);
+        leftStick = OI.gamePad.getY(Hand.kLeft);
+        rightStick = OI.gamePad.getY(Hand.kRight)*-1;
 
         SmartDashboard.putNumber("left stick:", leftStick);
         SmartDashboard.putNumber("right stick:", rightStick);

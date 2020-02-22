@@ -61,8 +61,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    //SmartDashboard.putNumber("Quaternion X", navx.getQuaternionX());
-    //SmartDashboard.putNumber("Quaternion Y", navx.getQuaternionY());
+    SmartDashboard.putNumber("Quaternion X", navx.getRawGyroX());
+    SmartDashboard.putNumber("Quaternion Y", navx.getRawGyroY());
   }
 
   @Override
