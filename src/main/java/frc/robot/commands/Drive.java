@@ -1,35 +1,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.OI;
-import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
 
-public class DriveWithJoysticks extends CommandBase {
+public class Drive extends CommandBase {
     
     /**
 	 * Initialize the DriveWithJoysticks command
 	 */
-	public DriveWithJoysticks() {
+	public Drive() {
 		super();
         addRequirements(OI.driveTrain);
 		RioLogger.log("Driving started");
     }
-
-    /*
-    1. Drives Skatebot and also defines the zero position of the turret
-    2. If the right button on the game pad is pressed, it stores that value in a boolean and displays it on SmartDashboard
-    3. If it is not pressed, then the joysticks can be used to drive the Skatebot:
-        1. Pushing the left stick forward makes the left wheels go forward
-        2. Pushing the right stick forward makes the right wheels go forward
-    4. If it is pressed, then:
-        1. It detects the current position of the turret
-        2. It sets that position as the defined zero position that the Limelight camera will return to
-        3. It stops driving
-    5. Switch out of teleoperated mode to stop the command and stop driving
-    */
     
     /**
 	 * Execute one iteration of the DriveWithJoysticks command (For multiple iterations, call multiple times)
