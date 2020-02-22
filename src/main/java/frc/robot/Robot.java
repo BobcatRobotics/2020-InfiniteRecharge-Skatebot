@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.*;
 
-import frc.robot.lib.RioLogger;
 import frc.robot.subsystems.NavxGyro;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
@@ -12,14 +11,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
   private CommandScheduler scheduler;
-  private DriveWithJoysticks driveWithJoysticks;
+  private Drive drive;
   private NavxGyro navx;
 
   @Override
   public void robotInit() {
     scheduler = CommandScheduler.getInstance();
     // Initializes the commands
-    driveWithJoysticks = new DriveWithJoysticks();
+    drive = new Drive();
     navx = new NavxGyro(SPI.Port.kMXP);
   }
 
@@ -56,7 +55,7 @@ public class Robot extends TimedRobot {
      * (Note: Calling an execute() method once does not mean that 
      * it will "complete" the command, it has to be called periodically)
      */
-    driveWithJoysticks.schedule();
+    drive.schedule();
   }
 
   @Override
