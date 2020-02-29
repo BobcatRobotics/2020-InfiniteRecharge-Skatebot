@@ -101,6 +101,6 @@ public class DriveTrain extends SubsystemBase {
         SmartDashboard.putNumber("left stick:", leftStick);
         SmartDashboard.putNumber("right stick:", rightStick);
         SmartDashboard.putNumber("left speed:", leftSpeed);
-        SmartDashboard.putNumber("right soeed:", rightSpeed);
+        SmartDashboard.putNumber("right speed:", rightSpeed);
     }
 }
