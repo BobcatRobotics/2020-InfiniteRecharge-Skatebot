@@ -4,6 +4,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.PerpetualCommand;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
 public class OI {
@@ -18,10 +21,18 @@ public class OI {
     public static final XboxController gamePad = new XboxController(RobotMap.gamePad);
     
     // Subsystems
-    public static final DriveTrain driveTrain = new DriveTrain();
-    public static final Limelight limelight = new Limelight();
-    public static final Turret turret = new Turret();
+    private static final DriveTrain drivetrain = new DriveTrain();
+    private static final Limelight limelight = new Limelight();
+    private static final Turret turret = new Turret();
 
-    // Gyro
-    public static NavxGyro gyro;
+    public OI() {
+        // Starts targeting when the up arrow on the D-pad is pressed
+        new POVButton(gamePad, RobotMap.povUp).whenPressed(new TargetEntity(limelight, turret));
+        // Ends targeting when the down arrow on the D-pad is pressed
+        new POVButton(gamePad, RobotMap.povDown).cancelWhenPressed(new TargetEntity(limelight, turret));
+        // Driving
+        new PerpetualCommand(new DriveTele(drivetrain, turret)).schedule();
+        // Zeroing
+        new PerpetualCommand(new LimelightControl(limelight, turret)).schedule();
+    }
 }

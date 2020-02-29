@@ -22,7 +22,6 @@ public class Turret extends SubsystemBase {
      */
     public Turret() {
         // Initialize Turret
-        super();
         stick = 0.0;
         velocity = 0.0;
         distance = 0.0;

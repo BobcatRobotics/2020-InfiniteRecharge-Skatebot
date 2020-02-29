@@ -6,16 +6,21 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.OI;
 import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
+import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Turret;
 
-public class DriveWithJoysticks extends CommandBase {
-    
+public class DriveTele extends CommandBase {
+    private DriveTrain driveTrain;
+    private Turret turret;
+
     /**
 	 * Initialize the DriveWithJoysticks command
 	 */
-	public DriveWithJoysticks() {
-		super();
-        addRequirements(OI.driveTrain);
-        addRequirements(OI.turret);
+	public DriveTele(DriveTrain driveTrain, Turret turret) {
+        this.turret = turret;
+		this.driveTrain = driveTrain;
+        addRequirements(this.driveTrain);
+        addRequirements(this.driveTrain);
 		RioLogger.log("Driving started");
     }
 
@@ -42,10 +47,10 @@ public class DriveWithJoysticks extends CommandBase {
         SmartDashboard.putBoolean("Zero Drive:", OI.gamePad.getRawButton(RobotMap.rightButton));
         if (OI.gamePad.getRawButton(RobotMap.rightButton)) {
             // Defines the zero position of the turret
-            OI.turret.defineZeroPosition();
-            OI.driveTrain.stop();
+            turret.defineZeroPosition();
+            driveTrain.stop();
         } else {
-            OI.driveTrain.drive();
+            driveTrain.drive();
         }
     }
 
@@ -67,7 +72,7 @@ public class DriveWithJoysticks extends CommandBase {
 	 */
 	@Override
 	public void end(boolean failed) {
-		OI.driveTrain.stop();
+		driveTrain.stop();
 		if (failed) {
 			RioLogger.log("Driving command was interrupted, switch to teleoperated mode to start again");
 		} else {

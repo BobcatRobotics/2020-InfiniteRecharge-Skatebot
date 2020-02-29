@@ -3,199 +3,130 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.lib.RioLogger;
 
 public class Limelight extends SubsystemBase {
-    // The mode that Limelight's camera will start in
-    private static final camMode camModeStart = camMode.DRIVER;
-    // The mode that Limelight's LEDs will start in
-    private static final ledMode ledModeStart = ledMode.OFF;
+
+    /**
+     * Limelight's camera states
+     */
+    public enum CAM {
+        VISION,
+        DRIVER
+    }
+
+    /**
+     * Limelight's LED states
+     */
+    public enum LED {
+        PIPELINE,
+        OFF,
+        BLINK,
+        ON
+    }
 
     private NetworkTable limelight;
-    private NetworkTableEntry tTarget;
-    private NetworkTableEntry tx;
-    private NetworkTableEntry ty;
-    private NetworkTableEntry ta;
-    
-    public enum ledMode {
-        PIPELINE(0), OFF(1), BLINK(2), ON(3);
-
-        private double value;
-
-        private ledMode(double value) {
-            this.value = value;
-        }
-    }
-
-    public enum camMode {
-        VISION(0), DRIVER(1);
-
-        private double value;
-
-        private camMode(double value) {
-            this.value = value;
-        }
-    }
 
     /**
-     * This class contains the methods for the Limelight camera and LEDs.
+     * Initialize the Limelight file
      */
     public Limelight() {
-        // Initialize Limelight
-        super();
-        setCamMode(camModeStart);
-        setLedMode(ledModeStart);
-
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
-        try {
-            tTarget = limelight.getEntry("tv");
-            tx = limelight.getEntry("tx");
-            ty = limelight.getEntry("ty");
-            ta = limelight.getEntry("ta");
-        } catch (Exception e) {
-            RioLogger.errorLog("Unable to initialize LimeLight. Error is " + e);
-        }
-        RioLogger.log("Limelight initialized");
     }
 
     /**
-     * @return Whether the limelight has any valid targets
+     * @param entry The entry's ID
+     * @return The network table entry
      */
-    public boolean hasTargets() {
-        return tTarget.getDouble(0.0) == 1.0;
+    public NetworkTableEntry getEntry(String entry) {
+        return limelight.getEntry(entry);
     }
 
     /**
-     * @return Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
+     * @param entry The entry's ID
+     * @return The double stored in the entry
      */
-    public double tx() {
-        return tx.getDouble(0.0);
+    public double getDouble(String entry) {
+        return getEntry(entry).getDouble(0.0);
     }
 
     /**
-     * @return Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
+     * @param entry The entry's ID
+     * @return The boolean stored in the entry
      */
-    public double ty() {
-        return ty.getDouble(0.0);
+    public boolean getBoolean(String entry) {
+        return getDouble(entry) == 1;
+    }
+
+    /**
+     * @param entry The entry's ID
+     * @return The integer stored in the entry
+     */
+    public int getInt(String entry) {
+        return (int) getDouble(entry);
+    }
+
+    /**
+     * @return Whether or not the limelight has any valid targets
+     */
+    public boolean hasTarget() {
+        return getBoolean("tv");
+    }
+
+    /**
+     * @return Horizontal Offset From Crosshair To Target (-27 to 27 degrees)
+     */
+    public double x() {
+        return getDouble("tx");
+    }
+
+    /**
+     * @return Vertical Offset From Crosshair To Target (-20.5 to 20.5 degrees)
+     */
+    public double y() {
+        return getDouble("ty");
     }
 
     /**
      * @return Target Area (0% of image to 100% of image)
      */
-    public double ta() {
-        return ta.getDouble(0.0);
+    public double targetArea() {
+        return getDouble("ta");
     }
 
     /**
-     * @return The current mode of the Limelight LEDs.
+     * @param entryName The entry's ID
+     * @param entryValue Value that the entry will be set to
      */
-    public ledMode getLedMode() {
-        double entry = (double) getLedModeEntry().getNumber(0);
-        if (entry == 0) {
-            return ledMode.PIPELINE;
-        } else if (entry == 1) {
-            return ledMode.OFF;
-        } else if (entry == 2) {
-            return ledMode.BLINK;
-        }
-        return ledMode.ON;
+    public void setEntry(String entryName, int entryValue) {
+        getEntry(entryName).setNumber(entryValue);
     }
 
     /**
-     * @return the LED mode in the network tables
+     * @param state what to set the limelight LED mode to
      */
-    private NetworkTableEntry getLedModeEntry() {
-        return limelight.getEntry("ledMode");
+    public void setLED(LED state) {
+        setEntry("ledMode", state.ordinal());
     }
 
     /**
-     * @param mode Sets the LED mode of Limelight to this.
+     * @return Get the state of the LEDs
      */
-    public void setLedMode(ledMode mode) {
-        getLedModeEntry().setNumber(mode.value);
-        RioLogger.log("Led mode: " + mode.value);
+    public LED getLED() {
+        return LED.values()[getInt("ledMode")];
     }
 
     /**
-     * @return The current mode of the Limelight camera.
+     * @param state what to set the limelight camera mode to
      */
-    public camMode getCamMode() {
-        double entry = (double) getCamModeEntry().getNumber(0);
-        if (entry == 0) {
-            return camMode.VISION;
-        }
-        return camMode.DRIVER;
+    public void setCAM(CAM state) {
+        setEntry("camMode", state.ordinal());
     }
 
     /**
-     * @return the LED mode in the network tables
+     * @return the state of the Limelight camera
      */
-    private NetworkTableEntry getCamModeEntry() {
-        return limelight.getEntry("camMode");
-    }
-
-    /**
-     * @param mode Sets the camera mode of Limelight to this.
-     */
-    public void setCamMode(camMode mode) {
-        getCamModeEntry().setNumber(mode.value);
-        RioLogger.log("Cam mode: " + mode.value);
-    }
-
-    /**
-     * Switches the camera mode from DRIVER to VISION and vice versa.
-     */
-    public void switchCamMode() {
-        camMode cam = getCamMode();
-        if (cam == camMode.DRIVER) {
-            setCamMode(camMode.VISION);
-        } else {
-            setCamMode(camMode.DRIVER);
-        }
-        RioLogger.log("camMode: " + getCamMode().name());
-    }
-
-    /**
-     * Switches the LED mode from PIPELINE to BLINK to OFF to ON.
-     */
-    public void switchLedMode() {
-        ledMode led = getLedMode();
-        if (led == ledMode.PIPELINE) {
-            setLedMode(ledMode.BLINK);
-        } else if (led == ledMode.BLINK) {
-            setLedMode(ledMode.OFF);
-        } else if (led == ledMode.OFF) {
-            setLedMode(ledMode.ON);
-        } else {
-            setLedMode(ledMode.PIPELINE);
-        }
-        RioLogger.log("ledMode: " + getLedMode().name());
-    }
-
-    /**
-     * Switches the LED mode to ON if it is in OFF mode, else switches mode to OFF.
-     */
-    public void switchLedModeOnOff() {
-        ledMode led = getLedMode();
-        if (led == ledMode.OFF) {
-            setLedMode(ledMode.ON);
-        } else {
-            setLedMode(ledMode.OFF);
-        }
-        RioLogger.log("ledMode: " + getLedMode().name());
-    }
-
-    /**
-     * This method is called periodically by the CommandScheduler.
-     * It turns the LEDs off when the Robot is disabled.
-     */
-    @Override
-    public void periodic() {
-        // This block executes periodically during disabled mode.
-        if (RobotState.isDisabled()) {
-            setLedMode(ledMode.OFF);
-        }
+    public CAM getCAM() {
+        return CAM.values()[getInt("ledMode")];
     }
 }
