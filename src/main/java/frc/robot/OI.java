@@ -9,6 +9,7 @@ public class OI {
     // Speed controllers
     public static final WPI_TalonSRX leftTalon = new WPI_TalonSRX(RobotMap.leftTalon);
     public static final WPI_TalonSRX rightTalon = new WPI_TalonSRX(RobotMap.rightTalon);
+    public static final WPI_TalonSRX turretTalon = new WPI_TalonSRX(RobotMap.turretTalon);
 
     // Input devices
     public static final XboxController gamePad = new XboxController(RobotMap.gamePad);
