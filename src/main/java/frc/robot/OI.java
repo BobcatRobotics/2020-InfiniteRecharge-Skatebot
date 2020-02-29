@@ -10,6 +10,9 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
 public class OI {
+    // Turret's distnace from the cetner that will be considered as the center
+    public static final int zeroThreshold = 250;
+
     // Speed controllers
     public static final WPI_TalonSRX leftTalon = new WPI_TalonSRX(RobotMap.leftTalon);
     public static final WPI_TalonSRX rightTalon = new WPI_TalonSRX(RobotMap.rightTalon);

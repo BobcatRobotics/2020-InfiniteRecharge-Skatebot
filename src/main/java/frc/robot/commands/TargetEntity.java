@@ -58,7 +58,7 @@ public class TargetEntity extends CommandBase {
 
 		if (limelight.hasTarget()) {
 			updateTurretPower();
-			turret.setTurretSpeed(turretPower);
+			turret.setSpeed(turretPower);
 		} else {
 			power = 0;
 			additionalPower = 0;

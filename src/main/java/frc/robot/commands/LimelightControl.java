@@ -72,11 +72,16 @@ public class LimelightControl extends CommandBase {
         
         // Press the left button to zero the Limelight camera.
         // This makes it unwind the cables and spin back into the defined zero position.
-        SmartDashboard.putBoolean("Can Zero Limelight:", turret.canZeroLimelight());
-        if (OI.gamePad.getRawButton(RobotMap.leftButton) && turret.canZeroLimelight()) {
+        boolean canZero = Math.abs(turret.getDistance()) > OI.zeroThreshold;
+        SmartDashboard.putBoolean("Can Zero Limelight:", canZero);
+        if (OI.gamePad.getRawButton(RobotMap.leftButton) && canZero) {
             // Checks if the turret is within 250 distance of the zero point
             // If the turret is, it will not zero the Limelight camera
-            turret.zeroLimelight();
+            if (turret.getDistance() > -(OI.zeroThreshold)) {
+                turret.setSpeed(-(Math.abs(turret.getStick()) * 0.5) + 0.1);
+            } else {
+                turret.setSpeed(Math.abs(turret.getStick()) * 0.5 + 0.1);
+            }
         } else {
             turret.updateTalonSpeed();
         }

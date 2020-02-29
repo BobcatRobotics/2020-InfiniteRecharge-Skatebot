@@ -47,7 +47,8 @@ public class DriveTele extends CommandBase {
         SmartDashboard.putBoolean("Zero Drive:", OI.gamePad.getRawButton(RobotMap.rightButton));
         if (OI.gamePad.getRawButton(RobotMap.rightButton)) {
             // Defines the zero position of the turret
-            turret.defineZeroPosition();
+            OI.turretTalon.setSelectedSensorPosition(0);
+            turret.setDistance(0.0);
             driveTrain.stop();
         } else {
             driveTrain.drive();

@@ -9,9 +9,6 @@ import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 
 public class Turret extends SubsystemBase {
-    // This value represents the minimum distance from the defined 
-    // zero position to move the turret back to it
-    private static final int zeroThreshold = 250;
 
     private double stick;
     private double velocity;
@@ -33,32 +30,16 @@ public class Turret extends SubsystemBase {
         RioLogger.log("Turret created");
     }
 
-    /**
-     * Sets the turret.distance to zero. When using the zeroLimelight() method, it will
-     * send the Limelight camera back to this position.
-     */
-    public void defineZeroPosition() {
-        OI.turretTalon.setSelectedSensorPosition(0);
-        distance = 0.0;
+    public double getDistance() {
+        return distance;
     }
 
-    /**
-     * @return Boolean value representing if the turret is in a position that can use the
-     * zeroLimelight() method. It checks if the Limelight camera is within 250 distance of the zero position.
-     */
-    public boolean canZeroLimelight() {
-        return (Math.abs(distance) > zeroThreshold);
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
-    /**
-     * Moves the Limelight camera back to the defined zero position set by the defineZeroPosition() method.
-     */
-    public void zeroLimelight() {
-        if (distance > -(zeroThreshold)) {
-            setTurretSpeed(-(Math.abs(stick) * 0.5) + 0.1);
-        } else {
-            setTurretSpeed(Math.abs(stick) * 0.5 + 0.1);
-        }
+    public double getStick() {
+        return stick;
     }
 
     /**
@@ -66,7 +47,7 @@ public class Turret extends SubsystemBase {
      * (Divided by 2 so it doesn't go too fast.)
      */
     public void updateTalonSpeed() {
-        setTurretSpeed(stick * 0.5);
+        setSpeed(stick * 0.5);
     }
 
     /**
@@ -76,7 +57,7 @@ public class Turret extends SubsystemBase {
      * <p>Negative values make the turret spin counterclockwise,
      * Positive values make it spin clockwise.
      */
-    public void setTurretSpeed(double value) {
+    public void setSpeed(double value) {
         OI.turretTalon.set(value);
     }
 
