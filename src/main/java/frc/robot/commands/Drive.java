@@ -28,6 +28,9 @@ public class Drive extends CommandBase {
 		right = OI.gamePad.getY(Hand.kRight);
 		left = OI.gamePad.getY(Hand.kLeft);
 		
+		OI.driveTrain.setRightPower(right);
+		OI.driveTrain.setLeftPower(left);
+
         OI.driveTrain.drive();
     }
 

@@ -1,6 +1,7 @@
 package frc.robot;
 
 public class RobotMap {
+
     // speed controller mappings
     public static final int leftTalon = 7;
     public static final int rightTalon = 8;

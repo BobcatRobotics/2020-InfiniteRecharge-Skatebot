@@ -19,9 +19,9 @@ import java.lang.*;
 public class StopAtCollision extends CommandBase {
     private NavxGyro gyro = new NavxGyro(SPI.Port.kMXP);
     private DriveTrain dt = new DriveTrain();
-    double last_linear_accel_x = 0;
-    double last_linear_accel_y = 0;
-    final static float kCollisionThreshold_DeltaG = 0.5f; // Jerk (m/s^3) threshold
+    double lastWorldAccelX = 0.0;
+    double lastWorldAccelY = 0.0;
+    final static double kCollisionThreshold_DeltaG = 1.2; // Jerk (m/s^3) threshold
     public static boolean collisionDetected = false;
 
     public StopAtCollision(NavxGyro gyro, DriveTrain dt) {
@@ -32,22 +32,26 @@ public class StopAtCollision extends CommandBase {
 
     public void DetectCollision() {
         // Calculating jerk
-        long timeInitialX = System.nanoTime();
-        last_linear_accel_x = gyro.getWorldLinearAccelX();
-        double curr_linear_accel_x = gyro.getWorldLinearAccelX();
-        double currentJerkX = (curr_linear_accel_x - last_linear_accel_x) / (System.nanoTime() * 1000000000 - timeInitialX * 1000000000);
-        long timeInitialY = System.nanoTime();
-        last_linear_accel_y = gyro.getWorldLinearAccelY();
-        double curr_linear_accel_y = gyro.getWorldLinearAccelY();
-        double currentJerkY = (curr_linear_accel_y - last_linear_accel_y) / (System.nanoTime() * 1000000000 - timeInitialY * 1000000000);
+        double currWorldAccelX = gyro.getWorldLinearAccelX();
+        double currentJerkX = currWorldAccelX - lastWorldAccelX;
+        lastWorldAccelX = currWorldAccelX;
 
+        double currWorldAccelY = gyro.getWorldLinearAccelY();
+        double currentJerkY = currWorldAccelY - lastWorldAccelY;
+        lastWorldAccelY = currWorldAccelX;
+
+        SmartDashboard.putNumber("Acceleration X", currWorldAccelX);
+        SmartDashboard.putNumber("Acceleration Y", currWorldAccelY);
         SmartDashboard.putNumber("Jerk X", currentJerkX);
         SmartDashboard.putNumber("Jerk Y", currentJerkY);
 
         // Testing the actual jerk against the threshold
-        if ((Math.abs(currentJerkX) > kCollisionThreshold_DeltaG)
-                || (Math.abs(currentJerkY) > kCollisionThreshold_DeltaG)) {
+        if (Math.abs(currentJerkY) > kCollisionThreshold_DeltaG
+                && Math.abs(currentJerkX) > kCollisionThreshold_DeltaG) {
+
             collisionDetected = true;
+        } else {
+            collisionDetected = false;
         }
     }
 
@@ -60,7 +64,12 @@ public class StopAtCollision extends CommandBase {
             SmartDashboard.putBoolean("Collision? ", false);
         }
     }
-    
+
+    @Override
+    public void initialize() {
+
+    }
+
     @Override
     public void execute() {
         DetectCollision();

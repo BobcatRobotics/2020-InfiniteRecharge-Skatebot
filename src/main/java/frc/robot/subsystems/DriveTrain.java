@@ -6,12 +6,17 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.OI;
+import frc.robot.RobotMap;
 import frc.robot.lib.RioLogger;
 
 public class DriveTrain extends SubsystemBase {
 
     private double leftSpeed = 0.0;
     private double rightSpeed = 0.0;
+
+    private boolean invertLeft = false;
+    private boolean invertRight = true;
+
     // Whether or not to square root the speed of the drive train
     private boolean sqrtSpeeds;
 
@@ -59,6 +64,11 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void setLeftPower(double pwr) {
+        
+        if (invertLeft) {
+            pwr *= OI.INVERT_MOTOR;
+        }
+        
         if (pwr > 1.0) {
             leftSpeed = 1.0;
             return;
@@ -71,6 +81,11 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void setRightPower(double pwr) {
+        
+        if (invertRight) {
+            pwr *= OI.INVERT_MOTOR;
+        }
+        
         if (pwr > 1.0) {
             rightSpeed = 1.0;
             return;
