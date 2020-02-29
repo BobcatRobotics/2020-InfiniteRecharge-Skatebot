@@ -1,25 +1,16 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Limelight.LED;
 import frc.robot.OI;
+import frc.robot.OI.TurretConstants;
 
 public class TargetEntity extends CommandBase {
-	// Minimum power is reach at (1.351...) degrees from the center
-	// degreesFromCenter = minimumPower / k
-	private final double k = 0.037037; // Power constant (27 degrees = Power of 1)
-	private final double minimumPower = 0.05; // Minimal power to send
-	private final double threshold = 0.15; // The threshold in degrees where the turret won't move
-
 	private Limelight limelight;
 	private Turret turret;
-
-	private double power; // Updated by the Limelight camera
-	private double additionalPower; // Updated by the right Joystick on the gamepad
-	private double turretPower; // Updated by the LimeLight camera; equal to power + additionalPower
+	private double power; // Updated by the LimeLight camera; equal to power
 
 	/**
 	 * 1. Check if Limelight has a target<br>
@@ -37,13 +28,12 @@ public class TargetEntity extends CommandBase {
 	 * @param trrt Turret subsystem
 	 * @param gmpd XboxController instance
 	 */
-	public TargetEntity(Limelight ll, Turret trrt) {
-		turret = trrt;
-		limelight = ll;
+	public TargetEntity(Limelight limelight, Turret turret) {
+		this.turret = turret;
+		this.limelight = limelight;
 		power = 0;
-		additionalPower = 0;
-		turretPower = 0;
-		addRequirements(limelight, turret);
+		addRequirements(this.limelight);
+		addRequirements(this.turret);
 	}
 
 	/**
@@ -52,52 +42,36 @@ public class TargetEntity extends CommandBase {
 	 */
 	@Override
 	public void execute() {
-		// If user is pressing right joystick in... target
 		limelight.setLED(Limelight.LED.ON); // Turn on the LED's if they haven't been turned on before
 		limelight.setCAM(Limelight.CAM.VISION); // Turn on vision mode if it wasn't turned on before
 
-		if (limelight.hasTarget()) {
-			updateTurretPower();
-			turret.setSpeed(turretPower);
-		} else {
-			power = 0;
-			additionalPower = 0;
-			turretPower = 0;
-		}
+		// Move the turret if it has a target
+		power = getPower();
+		turret.setSpeed(power);
 
 		// Put values on the Smart Dashboard
 		logValues();
 	}
 
 	/**
-	 * Retrive and preform calculations to calculate the turret power
+	 * Preform calculations to calculate the turret power
 	 */
-	public void updateTurretPower() {
+	public double getPower() {
+		double power;
 		double x = limelight.x(); // The number of degrees the target is off center horizontally
-		double degreesToCenter = -x; // The number of degrees Limelight needs to shift by to be centered
 
-		// Divide the degrees to center by 27
-		// Ex. 27 degrees is a power of 1
-		power = k * degreesToCenter;
+		// If the target is within the treshold, do nothing
+		if (x < TurretConstants.threshold && x > -TurretConstants.threshold) return 0.0;
+		else {
+			// Divide the degrees to center by 27
+			// Ex. 27 degrees is a power of 1
+			// We don't need to verify the value because 0.037037 (k) * 27 is actually 0.999999
+			power = TurretConstants.k * -x;
 
-		// Make sure the threshold and minimum power values are statisfied
-		if (x > threshold && power > -minimumPower) {
-			power = -minimumPower;
-		} else if (x < -threshold && power < minimumPower) {
-			power = minimumPower;
-		} else if (x < threshold && x > -threshold) {
-			power = 0.0;
-		}
-
-		// Increases the speed of the turret with the gamepad's right stick
-		additionalPower = Math.abs(OI.gamePad.getY(Hand.kRight)) * Math.signum(power);
-		// Total power of the turret
-		turretPower = power + additionalPower;
-		// Makes sure the power isn't higher than 1 or lower than -1
-		if (turretPower > 1) {
-			turretPower = 1;
-		} else if (turretPower < -1) {
-			turretPower = -1;
+			// Make sure the minimum power value is statisfied
+			if (x > TurretConstants.threshold && power > -TurretConstants.minimumPower) return -TurretConstants.minimumPower;
+			else if (x < -TurretConstants.threshold && power < TurretConstants.minimumPower) return TurretConstants.minimumPower;
+			return power;
 		}
 	}
 
@@ -106,9 +80,7 @@ public class TargetEntity extends CommandBase {
 	 */
 	public void logValues() {
 		SmartDashboard.putNumber("GamePad.POV", OI.gamePad.getPOV());
-		SmartDashboard.putNumber("Target.Power", power);
-		SmartDashboard.putNumber("Target.AddPower", additionalPower);
-		SmartDashboard.putNumber("Target.TurretPower", turretPower);
+		SmartDashboard.putNumber("Target.power", power);
 	}
 
 	/**

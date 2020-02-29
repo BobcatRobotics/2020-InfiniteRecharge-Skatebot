@@ -7,9 +7,7 @@ public class RobotMap {
     public static final int turretTalon = 10;
 
     // input device mappings
-    public static final int leftJoystick = 0;
-    public static final int rightJoystick = 1;
-    public static final int gamePad = 2;
+    public static final int gamePad = 0;
 
     // game pad button mappings
     public static final int padA = 1;

@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.OI;
@@ -52,17 +52,12 @@ public class DriveTrain extends SubsystemBase {
         drive(0.0, 0.0);
     }
 
-    /**
-     * This method is called periodically by the CommandScheduler.
-     * Updates speed and stick values and puts them on the SmartDashboard.
-     */
-    @Override
-    public void periodic() {
+    public void update() {
         leftSpeed = OI.leftTalon.getSelectedSensorVelocity(0);
         rightSpeed = OI.rightTalon.getSelectedSensorVelocity(0);
 
-        leftStick = OI.leftJoystick.getRawAxis(Joystick.AxisType.kY.value);
-        rightStick = OI.rightJoystick.getRawAxis(Joystick.AxisType.kY.value);
+        leftStick = OI.gamePad.getY(Hand.kLeft);
+        rightStick = OI.gamePad.getY(Hand.kRight);
 
         SmartDashboard.putNumber("left stick:", leftStick);
         SmartDashboard.putNumber("right stick:", rightStick);

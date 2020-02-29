@@ -46,7 +46,7 @@ public class Turret extends SubsystemBase {
      * Sets the speed of the turret talon to the turret stick value.
      * (Divided by 2 so it doesn't go too fast.)
      */
-    public void updateTalonSpeed() {
+    public void updateSpeed() {
         setSpeed(stick * 0.5);
     }
 
@@ -61,12 +61,7 @@ public class Turret extends SubsystemBase {
         OI.turretTalon.set(value);
     }
 
-    /**
-     * This method is called periodically by the CommandScheduler.
-     * Updates the turret.stick, turret.distance, and turret.velocity values.
-     */
-    @Override
-    public void periodic() {
+    public void update() {
         stick = -(OI.gamePad.getX(Hand.kLeft));
         distance = OI.turretTalon.getSelectedSensorPosition(0);
         velocity = OI.turretTalon.getSelectedSensorVelocity(0);
