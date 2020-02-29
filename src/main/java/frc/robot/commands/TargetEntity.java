@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Limelight.LED;
-import frc.robot.OI;
 import frc.robot.OI.TurretConstants;
 
 public class TargetEntity extends CommandBase {
@@ -49,8 +48,8 @@ public class TargetEntity extends CommandBase {
 		power = getPower();
 		turret.setSpeed(power);
 
-		// Put values on the Smart Dashboard
-		logValues();
+		
+		SmartDashboard.putNumber("TargetEntity.power", power);
 	}
 
 	/**
@@ -73,14 +72,6 @@ public class TargetEntity extends CommandBase {
 			else if (x < -TurretConstants.threshold && power < TurretConstants.minimumPower) return TurretConstants.minimumPower;
 			return power;
 		}
-	}
-
-	/**
-	 * Log diagnostic values
-	 */
-	public void logValues() {
-		SmartDashboard.putNumber("GamePad.POV", OI.gamePad.getPOV());
-		SmartDashboard.putNumber("Target.power", power);
 	}
 
 	/**
