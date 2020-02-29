@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class RioLogger {
+public class RioLogger { 
 	private static String path = File.separator + "home" + File.separator + "lvuser" + File.separator + "logs";
 	private static String filename = path + File.separator + "riolog.txt";
 

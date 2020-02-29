@@ -1,9 +1,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.*;
-
+import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NavxGyro;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
@@ -12,14 +13,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   private CommandScheduler scheduler;
   private Drive drive;
+  private DriveTrain driveTrain;
   private NavxGyro navx;
+  private StopAtCollision StopAtCollision;
 
   @Override
   public void robotInit() {
     scheduler = CommandScheduler.getInstance();
     // Initializes the commands
     drive = new Drive();
+    driveTrain = new DriveTrain();
     navx = new NavxGyro(SPI.Port.kMXP);
+    StopAtCollision = new StopAtCollision(navx, driveTrain);
   }
 
   @Override
@@ -56,12 +61,12 @@ public class Robot extends TimedRobot {
      * it will "complete" the command, it has to be called periodically)
      */
     drive.schedule();
+    StopAtCollision.schedule();
   }
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("Ray Gyro X", navx.getRawGyroX());
-    SmartDashboard.putNumber("Raw Gyro Y", navx.getRawGyroY());
+    
   }
 
   @Override

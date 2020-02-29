@@ -1,12 +1,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 
 public class Drive extends CommandBase {
-    
+	
+	private double right = 0.0;
+	private double left = 0.0;
     /**
 	 * Initialize the DriveWithJoysticks command
 	 */
@@ -21,6 +24,10 @@ public class Drive extends CommandBase {
 	 */
     @Override
     public void execute() {
+
+		right = OI.gamePad.getY(Hand.kRight);
+		left = OI.gamePad.getY(Hand.kLeft);
+		
         OI.driveTrain.drive();
     }
 

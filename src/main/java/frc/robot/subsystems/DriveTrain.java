@@ -9,8 +9,6 @@ import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 
 public class DriveTrain extends SubsystemBase {
-    private double leftStick = 0.0;
-    private double rightStick = 0.0;
 
     private double leftSpeed = 0.0;
     private double rightSpeed = 0.0;
@@ -39,7 +37,7 @@ public class DriveTrain extends SubsystemBase {
      * Drive with default values (the leftStick and rightStick values from the Joysticks).
      */
     public void drive() {
-        drive(leftStick, rightStick);
+        drive(leftSpeed, rightSpeed);
     }
 
     /**
@@ -58,6 +56,30 @@ public class DriveTrain extends SubsystemBase {
 
         OI.rightTalon.set(rightSpeed);
         OI.leftTalon.set(leftSpeed);
+    }
+
+    public void setLeftPower(double pwr) {
+        if (pwr > 1.0) {
+            leftSpeed = 1.0;
+            return;
+        } else if (pwr < -1.0) {
+            leftSpeed = -1.0;
+            return;
+        }
+
+        leftSpeed = pwr;
+    }
+
+    public void setRightPower(double pwr) {
+        if (pwr > 1.0) {
+            rightSpeed = 1.0;
+            return;
+        } else if (pwr < -1.0) {
+            rightSpeed = -1.0;
+            return;
+        }
+
+        rightSpeed = pwr;
     }
 
     /**
@@ -90,17 +112,17 @@ public class DriveTrain extends SubsystemBase {
      * This method is called periodically by the CommandScheduler.
      * Updates speed and stick values and puts them on the SmartDashboard.
      */
-    @Override
-    public void periodic() {
-        leftSpeed = OI.leftTalon.getSelectedSensorVelocity();
-        rightSpeed = OI.rightTalon.getSelectedSensorVelocity();
+    // @Override
+    // public void periodic() {
+    //     leftSpeed = OI.leftTalon.getSelectedSensorVelocity();
+    //     rightSpeed = OI.rightTalon.getSelectedSensorVelocity();
 
-        leftStick = OI.gamePad.getY(Hand.kLeft);
-        rightStick = OI.gamePad.getY(Hand.kRight)*-1;
+    //     leftStick = OI.gamePad.getY(Hand.kLeft);
+    //     rightStick = OI.gamePad.getY(Hand.kRight)*-1;
 
-        SmartDashboard.putNumber("left stick:", leftStick);
-        SmartDashboard.putNumber("right stick:", rightStick);
-        SmartDashboard.putNumber("left speed:", leftSpeed);
-        SmartDashboard.putNumber("right speed:", rightSpeed);
-    }
+    //     SmartDashboard.putNumber("left stick:", leftStick);
+    //     SmartDashboard.putNumber("right stick:", rightStick);
+    //     SmartDashboard.putNumber("left speed:", leftSpeed);
+    //     SmartDashboard.putNumber("right speed:", rightSpeed);
+    // }
 }
