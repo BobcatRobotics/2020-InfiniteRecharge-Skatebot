@@ -41,8 +41,8 @@ public class StopAtCollision extends CommandBase {
         double curr_linear_accel_y = gyro.getWorldLinearAccelY();
         double currentJerkY = (curr_linear_accel_y - last_linear_accel_y) / (System.nanoTime() * 1000000000 - timeInitialY * 1000000000);
 
-        RioLogger.log("current jerk x : " + currentJerkX);
-        RioLogger.log("current jerk y : " + currentJerkY);
+        SmartDashboard.putNumber("Jerk X", currentJerkX);
+        SmartDashboard.putNumber("Jerk Y", currentJerkY);
 
         // Testing the actual jerk against the threshold
         if ((Math.abs(currentJerkX) > kCollisionThreshold_DeltaG)
@@ -55,9 +55,9 @@ public class StopAtCollision extends CommandBase {
         if (collisionDetected) {
             // Stop the drivetrain
             dt.stop();
-            RioLogger.log("collision detected");
+            SmartDashboard.putBoolean("Collision? ", true);
         } else {
-            RioLogger.log("no collision detected");
+            SmartDashboard.putBoolean("Collision? ", false);
         }
     }
     
