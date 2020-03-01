@@ -7,14 +7,13 @@ import frc.robot.lib.RioLogger;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NavxGyro;
 
-// If a collision is detected in auto mode, then stop the robot for 1 second
 public class StopAtCollision extends CommandBase {
     private NavxGyro gyro = new NavxGyro(SPI.Port.kMXP);
     private DriveTrain dt = new DriveTrain();
-    double lastWorldAccelX = 0.0;
-    double lastWorldAccelY = 0.0;
-    long lastSystemTime = 0;
-    final static double kCollisionJerkThreshold = 1.2; // Jerk (m/s^3) threshold
+    private double lastWorldAccelX = 0.0;
+    private double lastWorldAccelY = 0.0;
+    private long lastSystemTime = 0;
+    final static double kCollisionJerkThreshold = 1.2; // Jerk (m/s^3) threshold for detecting collisions
     public static boolean collisionDetected = false;
 
     public StopAtCollision(NavxGyro gyro, DriveTrain dt) {
@@ -31,12 +30,12 @@ public class StopAtCollision extends CommandBase {
         lastSystemTime = currSystemTime; // Sets the last time to the current one for the next iteration
 
         // Finds difference in acceleration in X direction between current and previous iteration
-        double currWorldAccelX = gyro.getWorldLinearAccelX(); // Gets the current X acceleration
+        double currWorldAccelX = gyro.getWorldLinearAccelX(); // Gets the current X acceleration (in G)
         double deltaAccelX = currWorldAccelX - lastWorldAccelX; // Change between the current and previous acceleration
         lastWorldAccelX = currWorldAccelX; // Sets the last acceleration to the current one for the next iteration
         
         // Finds difference in acceleration in X direction between current and previous iteration
-        double currWorldAccelY = gyro.getWorldLinearAccelY(); // Gets the current Y acceleration
+        double currWorldAccelY = gyro.getWorldLinearAccelY(); // Gets the current Y acceleration (in G)
         double deltaAccelY = currWorldAccelY - lastWorldAccelY; // Change between the current and previous acceleration
         lastWorldAccelY = currWorldAccelX; // Sets the last acceleration to the current one for the next iteration
 
@@ -56,6 +55,7 @@ public class StopAtCollision extends CommandBase {
         if (Math.abs(currentJerkY) > kCollisionJerkThreshold
                 && Math.abs(currentJerkX) > kCollisionJerkThreshold) {
 
+            // If jerk is greater than the threshold then there must have been a collision
             collisionDetected = true;
         } else {
             collisionDetected = false;
