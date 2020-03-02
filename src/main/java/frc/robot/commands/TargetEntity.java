@@ -2,11 +2,18 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Limelight.CAM;
 import frc.robot.subsystems.Limelight.LED;
-import frc.robot.OI.TurretConstants;
+import frc.robot.subsystems.Turret;
 
 public class TargetEntity extends CommandBase {
+        
+	// Minimum power is reach at (1.351...) degrees from the center
+	public static final double k = 0.037037; // Power constant (27 degrees = Power of 1)
+	public static final double minimumPower = 0.05; // Minimal power to send
+	public static final double threshold = 0.15; // The threshold in degrees where the turret won't move
+
 	private Limelight limelight;
 	private Turret turret;
 	private double power; // Updated by the LimeLight camera; equal to power
@@ -23,9 +30,8 @@ public class TargetEntity extends CommandBase {
 	 * 8. Pass the power to the motor <br>
 	 * 9. Print the values to SmartDashboard
 	 * 
-	 * @param ll   Limelight subsystem
-	 * @param trrt Turret subsystem
-	 * @param gmpd XboxController instance
+	 * @param limelight   Limelight subsystem
+	 * @param turret Turret subsystem
 	 */
 	public TargetEntity(Limelight limelight, Turret turret) {
 		power = 0;
@@ -41,14 +47,15 @@ public class TargetEntity extends CommandBase {
 	 */
 	@Override
 	public void execute() {
-		limelight.setLED(Limelight.LED.ON); // Turn on the LED's if they haven't been turned on before
-		limelight.setCAM(Limelight.CAM.VISION); // Turn on vision mode if it wasn't turned on before
+		limelight.setLED(LED.ON); // Turn on the LED's if they haven't been turned on before
+		limelight.setCAM(CAM.VISION); // Turn on vision mode if it wasn't turned on before
 
 		// Move the turret if it has a target
-		power = getPower();
-		turret.setSpeed(power);
+		if (limelight.v()) {
+			power = getPower();
+			turret.setSpeed(power);
+		} else power = 0;
 
-		
 		SmartDashboard.putNumber("TargetEntity.power", power);
 	}
 
@@ -60,16 +67,16 @@ public class TargetEntity extends CommandBase {
 		double x = limelight.x(); // The number of degrees the target is off center horizontally
 
 		// If the target is within the treshold, do nothing
-		if (x < TurretConstants.threshold && x > -TurretConstants.threshold) return 0.0;
+		if (x < threshold && x > -threshold) return 0.0;
 		else {
 			// Divide the degrees to center by 27
 			// Ex. 27 degrees is a power of 1
 			// We don't need to verify the value because 0.037037 (k) * 27 is actually 0.999999
-			power = TurretConstants.k * -x;
+			power = k * -x;
 
 			// Make sure the minimum power value is statisfied
-			if (x > TurretConstants.threshold && power > -TurretConstants.minimumPower) return -TurretConstants.minimumPower;
-			else if (x < -TurretConstants.threshold && power < TurretConstants.minimumPower) return TurretConstants.minimumPower;
+			if (x > threshold && power > -minimumPower) return -minimumPower;
+			else if (x < -threshold && power < minimumPower) return minimumPower;
 			return power;
 		}
 	}

@@ -24,6 +24,23 @@ public class Limelight extends SubsystemBase {
         ON
     }
 
+    /**
+     * Limelight's streaming states
+     */
+    public enum STREAM {
+        STANDARD,
+        MAIN,
+        SECONDARY
+    }
+
+    /**
+     * Limelight's snapshot states
+     */
+    public enum SNAPSHOT {
+        OFF,
+        ON
+    }
+
     private NetworkTable limelight;
 
     /**
@@ -68,7 +85,7 @@ public class Limelight extends SubsystemBase {
     /**
      * @return Whether or not the limelight has any valid targets
      */
-    public boolean hasTarget() {
+    public boolean v() {
         return getBoolean("tv");
     }
 
@@ -87,10 +104,59 @@ public class Limelight extends SubsystemBase {
     }
 
     /**
-     * @return Target Area (0% of image to 100% of image)
+     * @return Skew or rotation
      */
-    public double targetArea() {
+    public double s() {
+        return getDouble("ts");
+    }
+
+    /**
+     * @return The pipeline’s latency contribution (ms)
+     */
+    public double l() {
+        return getDouble("tl");
+    }
+
+    /**
+     * @return Target Area
+     */
+    public double a() {
         return getDouble("ta");
+    }
+
+    /**
+     * @return Side length of shortest side of the fitted bounding box
+     */
+    public int tshort() {
+        return getInt("tshort");
+    }
+
+    /**
+     * @return Side length of longest side of the fitted bounding box
+     */
+    public int tlong() {
+        return getInt("tlong");
+    }
+
+    /**
+     * @return Horizontal side length of the rough bounding box
+     */
+    public int thor() {
+        return getInt("thor");
+    }
+
+    /**
+     * @return Vertical side length of the rough bounding box
+     */
+    public int tvert() {
+        return getInt("tvert");
+    }
+
+    /**
+     * @return True active pipeline index of the camera
+     */
+    public int getPipe() {
+        return getInt("getpipe");
     }
 
     /**
@@ -102,28 +168,84 @@ public class Limelight extends SubsystemBase {
     }
 
     /**
-     * @param state what to set the limelight LED mode to
+     * @param state What to set the Limelight SNAPSHOT mode to
      */
-    public void setLED(LED state) {
-        setEntry("ledMode", state.ordinal());
+    public void setSnapshot(SNAPSHOT state) {
+        setSnapshot(state.ordinal());
     }
 
     /**
-     * @return Get the state of the LEDs
+     * @param state What to set the Limelight SNAPSHOT mode to
+     */
+    public void setSnapshot(int state) {
+        setEntry("snapshot", state);
+    }
+
+    /**
+     * @return The state of the SNAPSHOT
+     */
+    public SNAPSHOT getSnapshot() {
+        return SNAPSHOT.values()[getInt("snapshot")];
+    }
+
+    /**
+     * @param state What to set the Limelight STREAM mode to
+     */
+    public void setStream(STREAM state) {
+        setStream(state.ordinal());
+    }
+
+    /**
+     * @param state What to set the Limelight STREAM mode to
+     */
+    public void setStream(int state) {
+        setEntry("stream", state);
+    }
+
+    /**
+     * @return The state of the STREAM
+     */
+    public STREAM getStream() {
+        return STREAM.values()[getInt("stream")];
+    }
+
+    /**
+     * @param state What to set the Limelight LED mode to
+     */
+    public void setLED(LED state) {
+        setLED(state.ordinal());
+    }
+
+    /**
+     * @param state What to set the Limelight LED mode to
+     */
+    public void setLED(int state) {
+        setEntry("ledMode", state);
+    }
+
+    /**
+     * @return The state of the LEDs
      */
     public LED getLED() {
         return LED.values()[getInt("ledMode")];
     }
 
     /**
-     * @param state what to set the limelight camera mode to
+     * @param state What to set the Limelight camera mode to
      */
     public void setCAM(CAM state) {
-        setEntry("camMode", state.ordinal());
+        setCAM(state.ordinal());
     }
 
     /**
-     * @return the state of the Limelight camera
+     * @param state What to set the Limelight camera mode to
+     */
+    public void setCAM(int state) {
+        setEntry("camMode", state);
+    }
+
+    /**
+     * @return The state of the Limelight camera
      */
     public CAM getCAM() {
         return CAM.values()[getInt("ledMode")];
