@@ -28,9 +28,9 @@ public class TargetEntity extends CommandBase {
 	 * @param gmpd XboxController instance
 	 */
 	public TargetEntity(Limelight limelight, Turret turret) {
+		power = 0;
 		this.turret = turret;
 		this.limelight = limelight;
-		power = 0;
 		addRequirements(this.limelight);
 		addRequirements(this.turret);
 	}

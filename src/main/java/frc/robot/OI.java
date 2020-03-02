@@ -3,10 +3,6 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.PerpetualCommand;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
 
 public class OI {
     public class TurretConstants {
@@ -27,18 +23,4 @@ public class OI {
 
     // Input devices
     public static final XboxController gamePad = new XboxController(RobotMap.gamePad);
-    
-    // Subsystems
-    private static final DriveTrain drivetrain = new DriveTrain();
-    private static final Limelight limelight = new Limelight();
-    private static final Turret turret = new Turret();
-
-    public OI() {
-        // Starts targeting when the up arrow on the D-pad is pressed
-        new POVButton(gamePad, RobotMap.povUp).whenPressed(new TargetEntity(limelight, turret));
-        // Ends targeting when the down arrow on the D-pad is pressed
-        new POVButton(gamePad, RobotMap.povDown).cancelWhenPressed(new TargetEntity(limelight, turret));
-        // Driving
-        new PerpetualCommand(new DriveTele(drivetrain, limelight, turret)).schedule();
-    }
 }
