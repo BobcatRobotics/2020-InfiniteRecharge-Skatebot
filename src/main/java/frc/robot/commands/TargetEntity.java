@@ -10,9 +10,9 @@ import frc.robot.subsystems.Turret;
 public class TargetEntity extends CommandBase {
         
 	// Minimum power is reach at (1.351...) degrees from the center
-	public static final double k = 0.037037; // Power constant (27 degrees = Power of 1)
-	public static final double minimumPower = 0.05; // Minimal power to send
-	public static final double threshold = 0.15; // The threshold in degrees where the turret won't move
+	public final double k = 0.037037; // Power constant (27 degrees = Power of 1)
+	public final double minimumPower = 0.05; // Minimal power to send
+	public final double threshold = 0.15; // The threshold in degrees where the turret won't move
 
 	private Limelight limelight;
 	private Turret turret;
