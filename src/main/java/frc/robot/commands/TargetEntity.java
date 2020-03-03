@@ -63,7 +63,7 @@ public class TargetEntity extends CommandBase {
 	 * Preform calculations to calculate the turret power
 	 */
 	public double getPower() {
-		double power;
+		double pwr;
 		double x = limelight.x(); // The number of degrees the target is off center horizontally
 
 		// If the target is within the treshold, do nothing
@@ -72,12 +72,12 @@ public class TargetEntity extends CommandBase {
 			// Divide the degrees to center by 27
 			// Ex. 27 degrees is a power of 1
 			// We don't need to verify the value because 0.037037 (k) * 27 is actually 0.999999
-			power = k * -x;
+			pwr = k * -x;
 
 			// Make sure the minimum power value is statisfied
-			if (x > threshold && power > -minimumPower) return -minimumPower;
-			else if (x < -threshold && power < minimumPower) return minimumPower;
-			return power;
+			if (x > threshold && pwr > -minimumPower) return -minimumPower;
+			else if (x < -threshold && pwr < minimumPower) return minimumPower;
+			return pwr;
 		}
 	}
 
