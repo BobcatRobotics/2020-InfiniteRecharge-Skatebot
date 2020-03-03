@@ -12,6 +12,7 @@ public class StopAtCollision extends CommandBase {
     private DriveTrain dt = new DriveTrain();
     private double lastWorldAccelX = 0.0;
     private double lastWorldAccelY = 0.0;
+    private double lastWorldAccelZ = 0.0;
     private long lastSystemTime = 0;
     final static double kCollisionJerkThreshold = 1.2; // Jerk (m/s^3) threshold for detecting collisions
     public static boolean collisionDetected = false;
@@ -38,22 +39,31 @@ public class StopAtCollision extends CommandBase {
         double currWorldAccelY = gyro.getWorldLinearAccelY(); // Gets the current Y acceleration (in G)
         double deltaAccelY = currWorldAccelY - lastWorldAccelY; // Change between the current and previous acceleration
         lastWorldAccelY = currWorldAccelX; // Sets the last acceleration to the current one for the next iteration
+      
+        double currWorldAccelZ = gyro.getWorldLinearAccelZ();
+        double deltaAccelZ = currWorldAccelZ - lastWorldAccelZ;
+        lastWorldAccelZ = currWorldAccelZ;
 
         // jerk is the rate at which an object's acceleration changes with respect to time
         // so it has to be divided by time. Measured in g/s
         double currentJerkX = deltaAccelX / deltaTimeSeconds;
         double currentJerkY = deltaAccelY / deltaTimeSeconds;
+        double currentJerkZ = deltaAccelZ / deltaTimeSeconds;
         
         SmartDashboard.putNumber("Acceleration X", currWorldAccelX);
         SmartDashboard.putNumber("Acceleration Y", currWorldAccelY);
+        SmartDashboard.putNumber("Acceleration Z", currWorldAccelZ);
         SmartDashboard.putNumber("Change in Acceleration X", deltaAccelX);
         SmartDashboard.putNumber("Change in Acceleration Y", deltaAccelY);
+        SmartDashboard.putNumber("Change in Acceleration Z", deltaAccelZ);
         SmartDashboard.putNumber("Jerk X", currentJerkX);
         SmartDashboard.putNumber("Jerk Y", currentJerkY);
+        SmartDashboard.putNumber("Jerk Z", currentJerkZ);
 
         // Testing the actual jerk against the threshold
-        if (Math.abs(currentJerkY) > kCollisionJerkThreshold
-                && Math.abs(currentJerkX) > kCollisionJerkThreshold) {
+        if (Math.abs(currentJerkY) > kCollisionThreshold_DeltaG
+                || Math.abs(currentJerkX) > kCollisionThreshold_DeltaG
+                && Math.abs(currentJerkZ) > kCollisionThreshold_DeltaG) {
 
             // If jerk is greater than the threshold then there must have been a collision
             collisionDetected = true;
