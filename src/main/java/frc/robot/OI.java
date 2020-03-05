@@ -10,6 +10,8 @@ public class OI {
     //
     public static final double INVERT_MOTOR = -1.0;
 
+    public static boolean collision = false;
+
     // Speed controllers
     public static final WPI_TalonSRX leftTalon = new WPI_TalonSRX(RobotMap.leftTalon);
     public static final WPI_TalonSRX rightTalon = new WPI_TalonSRX(RobotMap.rightTalon);

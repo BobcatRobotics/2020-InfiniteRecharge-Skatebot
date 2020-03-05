@@ -4,16 +4,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NavxGyro;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import java.lang.*;
 
 // If a collision is detected in auto mode, then stop the robot for 1 second
 public class StopAtCollision extends CommandBase {
@@ -49,9 +45,9 @@ public class StopAtCollision extends CommandBase {
         if (Math.abs(currentJerkY) > kCollisionThreshold_DeltaG
                 && Math.abs(currentJerkX) > kCollisionThreshold_DeltaG) {
 
-            collisionDetected = true;
+            OI.collision = true;
         } else {
-            collisionDetected = false;
+            OI.collision = false;
         }
     }
 
@@ -78,5 +74,17 @@ public class StopAtCollision extends CommandBase {
         } catch (InterruptedException e) {
             RioLogger.log("Interrupted Exception " + e);
         }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (interrupted) {
+            isFinished();
+        }
+    }
+
+    @Override 
+    public boolean isFinished() {
+        return true;
     }
 }
