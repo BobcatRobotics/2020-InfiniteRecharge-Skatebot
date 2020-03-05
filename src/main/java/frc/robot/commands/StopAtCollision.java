@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.OI;
 import frc.robot.lib.RioLogger;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NavxGyro;
@@ -14,7 +15,8 @@ public class StopAtCollision extends CommandBase {
     private double lastWorldAccelY = 0.0;
     private double lastWorldAccelZ = 0.0;
     private long lastSystemTime = 0;
-    final static double kCollisionJerkThreshold = 1.2; // Jerk (m/s^3) threshold for detecting collisions
+    final static double kCollisionJerkThreshold = 28; // Jerk (m/s^3) threshold for detecting collisions
+    final static double kCollisionZJerkThreshold = 120;
     public static boolean collisionDetected = false;
 
     public StopAtCollision(NavxGyro gyro, DriveTrain dt) {
@@ -38,7 +40,7 @@ public class StopAtCollision extends CommandBase {
         // Finds difference in acceleration in X direction between current and previous iteration
         double currWorldAccelY = gyro.getWorldLinearAccelY(); // Gets the current Y acceleration (in G)
         double deltaAccelY = currWorldAccelY - lastWorldAccelY; // Change between the current and previous acceleration
-        lastWorldAccelY = currWorldAccelX; // Sets the last acceleration to the current one for the next iteration
+        lastWorldAccelY = currWorldAccelY; // Sets the last acceleration to the current one for the next iteration
       
         double currWorldAccelZ = gyro.getWorldLinearAccelZ();
         double deltaAccelZ = currWorldAccelZ - lastWorldAccelZ;
@@ -60,13 +62,35 @@ public class StopAtCollision extends CommandBase {
         SmartDashboard.putNumber("Jerk Y", currentJerkY);
         SmartDashboard.putNumber("Jerk Z", currentJerkZ);
 
-        // Testing the actual jerk against the threshold
-        if (Math.abs(currentJerkY) > kCollisionThreshold_DeltaG
-                || Math.abs(currentJerkX) > kCollisionThreshold_DeltaG
-                && Math.abs(currentJerkZ) > kCollisionThreshold_DeltaG) {
+        // // Testing the actual jerk against the threshold
+        // if (((Math.abs(currentJerkY) > kCollisionJerkThreshold)
+        //         || (Math.abs(currentJerkX) > kCollisionJerkThreshold))
+        //         ^ (Math.abs(currentJerkZ) > kCollisionZJerkThreshold)) {
 
-            // If jerk is greater than the threshold then there must have been a collision
-            collisionDetected = true;
+        //     // If jerk is greater than the threshold then there must have been a collision
+        //     collisionDetected = true;
+        // } else {
+        //     collisionDetected = false;
+        // }
+
+        // Testing the actual jerk against the threshold
+        if ((Math.abs(currentJerkX) > kCollisionJerkThreshold)
+                || (Math.abs(currentJerkY) > kCollisionJerkThreshold))
+            {
+                SmartDashboard.putNumber("left speed", OI.leftTalon.get());
+                SmartDashboard.putNumber("right speed", OI.rightTalon.get());
+               if (Math.signum(OI.leftTalon.get()) == Math.signum(OI.rightTalon.get())) {
+                   // detects if it is spinning
+                   if (Math.abs(currentJerkZ) < kCollisionZJerkThreshold) {
+                       collisionDetected = false;
+                   }
+
+                collisionDetected = true;
+               }
+               else {
+                   collisionDetected = true;
+               }
+
         } else {
             collisionDetected = false;
         }
