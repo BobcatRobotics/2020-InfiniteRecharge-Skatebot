@@ -102,6 +102,7 @@ public class StopAtCollision extends CommandBase {
         // First detect if there is a collision 
         // (if jerk is greater than threshold)
         DetectCollision();
+        OI.collision = collisionDetected;
         try {
             // If there is a collision stop the drive train
             StopIfCollision(collisionDetected);
