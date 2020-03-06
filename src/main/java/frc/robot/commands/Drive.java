@@ -10,15 +10,16 @@ public class Drive extends CommandBase {
 	
 	private double right = 0.0;
 	private double left = 0.0;
+
     /**
 	 * Initialize the DriveWithJoysticks command
 	 */
 	public Drive() {
 		super();
-        addRequirements(OI.driveTrain);
+		addRequirements(OI.driveTrain);
 		RioLogger.log("Driving started");
-    }
-    
+	}
+
     /**
 	 * Execute one iteration of the DriveWithJoysticks command (For multiple iterations, call multiple times)
 	 */
