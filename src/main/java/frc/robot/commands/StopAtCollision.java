@@ -8,6 +8,7 @@ import frc.robot.lib.RioLogger;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NavxGyro;
 
+// If a collision is detected in auto mode, then stop the robot for 1 second
 public class StopAtCollision extends CommandBase {
     private NavxGyro gyro = new NavxGyro(SPI.Port.kMXP);
     private DriveTrain dt = new DriveTrain();
@@ -62,17 +63,6 @@ public class StopAtCollision extends CommandBase {
         SmartDashboard.putNumber("Jerk Y", currentJerkY);
         SmartDashboard.putNumber("Jerk Z", currentJerkZ);
 
-        // // Testing the actual jerk against the threshold
-        // if (((Math.abs(currentJerkY) > kCollisionJerkThreshold)
-        //         || (Math.abs(currentJerkX) > kCollisionJerkThreshold))
-        //         ^ (Math.abs(currentJerkZ) > kCollisionZJerkThreshold)) {
-
-        //     // If jerk is greater than the threshold then there must have been a collision
-        //     collisionDetected = true;
-        // } else {
-        //     collisionDetected = false;
-        // }
-
         // Testing the actual jerk against the threshold
         if ((Math.abs(currentJerkX) > kCollisionJerkThreshold)
                 || (Math.abs(currentJerkY) > kCollisionJerkThreshold))
@@ -91,6 +81,7 @@ public class StopAtCollision extends CommandBase {
                    collisionDetected = true;
                }
 
+            collisionDetected = true;
         } else {
             collisionDetected = false;
         }
@@ -117,5 +108,17 @@ public class StopAtCollision extends CommandBase {
         } catch (InterruptedException e) {
             RioLogger.log("Interrupted Exception " + e);
         }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (interrupted) {
+            isFinished();
+        }
+    }
+
+    @Override 
+    public boolean isFinished() {
+        return true;
     }
 }
