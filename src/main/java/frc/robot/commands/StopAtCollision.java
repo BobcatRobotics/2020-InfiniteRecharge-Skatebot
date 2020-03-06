@@ -17,6 +17,7 @@ public class StopAtCollision extends CommandBase {
     private DriveTrain dt = new DriveTrain();
     double lastWorldAccelX = 0.0;
     double lastWorldAccelY = 0.0;
+    double lastWorldAccelZ = 0.0;
     final static double kCollisionThreshold_DeltaG = 1.2; // Jerk (m/s^3) threshold
     public static boolean collisionDetected = false;
 
@@ -36,14 +37,21 @@ public class StopAtCollision extends CommandBase {
         double currentJerkY = currWorldAccelY - lastWorldAccelY;
         lastWorldAccelY = currWorldAccelX;
 
+        double currWorldAccelZ = gyro.getWorldLinearAccelZ();
+        double currentJerkZ = currWorldAccelZ - lastWorldAccelZ;
+        lastWorldAccelZ = currWorldAccelZ;
+
         SmartDashboard.putNumber("Acceleration X", currWorldAccelX);
         SmartDashboard.putNumber("Acceleration Y", currWorldAccelY);
+        SmartDashboard.putNumber("Acceleration Z", currWorldAccelZ);
         SmartDashboard.putNumber("Jerk X", currentJerkX);
         SmartDashboard.putNumber("Jerk Y", currentJerkY);
+        SmartDashboard.putNumber("Jerk Z", currentJerkZ);
 
         // Testing the actual jerk against the threshold
         if (Math.abs(currentJerkY) > kCollisionThreshold_DeltaG
-                && Math.abs(currentJerkX) > kCollisionThreshold_DeltaG) {
+                || Math.abs(currentJerkX) > kCollisionThreshold_DeltaG
+                && Math.abs(currentJerkZ) > kCollisionThreshold_DeltaG) {
 
             OI.collision = true;
         } else {
