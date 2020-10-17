@@ -14,43 +14,39 @@ import edu.wpi.first.wpilibj.Timer;
 public class RioLoggerThread {
 	public static RioLoggerThread instance = null;
 	private static Thread loggerThread;
-	private static String path =  "";
+	private static String path = "";
 	private static String logName = "thread.txt";
 	private static final String dateFmt = "yyyy-MM-dd_hh.mm.ss'.thread.txt'";
 
 	private static List<String> logs = new ArrayList<String>();
 	private static long totalLogTime = 3600L; // Default is 1 hour (seconds)
-	private static long logFrequency = 150L;  // Default is 2 minutes 30 seconds (seconds)
+	private static long logFrequency = 150L; // Default is 2 minutes 30 seconds (seconds)
 	private static double endTime = 0.0;
 	private static boolean isLogging = false;
 
-	
 	static {
-		path =  File.separator + "home" + File.separator + "lvuser" + File.separator + "logs" + File.separator;
+		path = File.separator + "home" + File.separator + "lvuser" + File.separator + "logs" + File.separator;
 		logName = path + new SimpleDateFormat(dateFmt).format(new Date());
 		instance = new RioLoggerThread();
 		createLogDirectory();
 		loggerThread = new Thread(new LogThread());
-		//logThread.setPriority((Thread.NORM_PRIORITY + Thread.MAX_PRIORITY) / 2);
 		loggerThread.start();
 		RioLogger.log("RioLoggerThread static {} finished");
 	}
-	
+
 	private static class LogThread implements Runnable {
 		@Override
 		public void run() {
 			isLogging = true;
 			endTime = Timer.getFPGATimestamp() + totalLogTime;
-			RioLogger.log(String.format("RioLoggerThread.LogThread run() configuration current time, end time %18f, %18.0f ",Timer.getFPGATimestamp(), endTime));
-			//endTime = System.currentTimeMillis() + totalLogTime;
-			//RioLogger.log(String.format("RioLoggerThread.LogThread run() configuration current time, end time %18d, %18.0f ",System.currentTimeMillis(), endTime));
+			RioLogger.log(String.format("RioLoggerThread.LogThread run() configuration current time, end time %18f, %18.0f ",
+					Timer.getFPGATimestamp(), endTime));
 			startLogging();
-			RioLogger.log(String.format("RioLoggerThread.LogThread run() ending current time, end time %18d, %18.0f ",Timer.getFPGATimestamp(), endTime));
-			//RioLogger.log(String.format("RioLoggerThread.LogThread run() ending current time, end time %18d, %18.0f ",System.currentTimeMillis(), endTime));
+			RioLogger.log(String.format("RioLoggerThread.LogThread run() ending current time, end time %18d, %18.0f ",
+					Timer.getFPGATimestamp(), endTime));
 		}
 	}
 
-	
 	/**
 	 * Returns the one and only one instance of RioLoggerThread
 	 */
@@ -63,15 +59,15 @@ public class RioLoggerThread {
 
 	// Set Logging Time (in seconds)
 	public static void setLoggingParameters(long totLogTime, long totFreq) {
-		RioLogger.log("RioLoggerThread.LogThread setLoggingParameters() totLogTime, totFreq " +totLogTime + ", " + totFreq );
+		RioLogger
+				.log("RioLoggerThread.LogThread setLoggingParameters() totLogTime, totFreq " + totLogTime + ", " + totFreq);
 		stopLogging();
 		logName = path + new SimpleDateFormat(dateFmt).format(new Date());
 
 		totalLogTime = totLogTime;
 		logFrequency = totFreq;
-		
+
 		loggerThread = new Thread(new LogThread());
-		//logThread.setPriority((Thread.NORM_PRIORITY + Thread.MAX_PRIORITY) / 2);
 		loggerThread.start();
 	}
 
@@ -80,28 +76,25 @@ public class RioLoggerThread {
 		isLogging = true;
 		do {
 			try {
-					Thread.sleep(logFrequency * 1000L); // sleep() in milliseconds
+				Thread.sleep(logFrequency * 1000L); // sleep() in milliseconds
 			} catch (InterruptedException e) {
-				/* The thread can be interrupted by a request to write the logs */
+				// The thread can be interrupted by a request to write the logs
 				RioLogger.log("RioLoggerThread startLogging() interrupted. Processing logs.");
 			}
 			if (logs.size() > 0) {
 				List<String> tempLog = new ArrayList<String>(logs);
 				logs.clear();
 				writeLog(tempLog);
-			} 
+			}
 			cTime = Timer.getFPGATimestamp();
-			//cTime = System.currentTimeMillis();
 		} while (isLogging && (cTime < endTime));
-		//cTime = System.currentTimeMillis();
 		cTime = Timer.getFPGATimestamp();
 		writeLog(logs);
 		logs.clear();
 		isLogging = false;
 	}
-	
+
 	public static void log(String line) {
-		// TODO:: Check if FPGA can convert to realtime
 		logs.add(line);
 	}
 
@@ -113,12 +106,12 @@ public class RioLoggerThread {
 		return isLogging;
 	}
 
-	/* This method will interrupt the current thread */
-	/* write the log and then resume                 */
+	// This method will interrupt the current thread
+	// write the log and then resume
 	public static void writeLog() {
 		loggerThread.interrupt();
 	}
-	
+
 	private static void createLogDirectory() {
 		File newDir = new File(path);
 		if (!newDir.exists()) {
@@ -132,6 +125,7 @@ public class RioLoggerThread {
 
 	private static void writeLog(List<String> log) {
 		BufferedWriter outputStream;
+
 		try {
 			// Open the file
 			outputStream = new BufferedWriter(new FileWriter(logName, true));

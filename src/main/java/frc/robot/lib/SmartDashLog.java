@@ -35,12 +35,14 @@ public class SmartDashLog implements Sendable {
 		builder.setSmartDashboardType("Log Display");
 
 		// Add most recent MAX_LINES to display
-		currentLine = (lines.size() < MAX_LINES ? 0 : lines.size() - MAX_LINES);
+		currentLine = (lines.size() < MAX_LINES ?  0 : lines.size() - MAX_LINES);
 		int linesToDisplay = (lines.size() < MAX_LINES ? lines.size() : currentLine + MAX_LINES);
-
+		
 		List<String> lineView = lines.subList(currentLine, linesToDisplay);
-		builder.addStringArrayProperty("LOG", () -> {
-			return lineView.toArray(new String[0]);
-		}, null);
+		builder.addStringArrayProperty
+		  ("LOG", 
+		    () -> { return lineView.toArray(new String[0]);}, 
+			null
+		  );
 	}
 }
