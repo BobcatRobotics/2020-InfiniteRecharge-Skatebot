@@ -30,7 +30,7 @@ public class RobotMap {
  	// Define Joy Sticks and gamepads channels
 	public static int leftJoystick = 0;     // Left stick is stick 0, and should be first USB
 	public static int rightJoystick = 1;    // Right stick is stick 1, and should be second USB
-	public static int gamePad = 2;          // Gamepad is stick 2, and should be third USB 
+	public static int gamePad = 2;          // Gamepad is stick 2, and should be third USB
 
 	// Define buttons and switches on the left & right joystick
 	public static int stickShift = 3;       // Shift Gears On right stick
@@ -57,7 +57,11 @@ public class RobotMap {
 	public static int panelGripSolenoid = 6;  // Solenoid to engage panel hold/release mechanism
 	public static int panelInOutSolenoid = 1; // Solenoid to move panel mechanism in/out
 
-	//Test Solenoids for Aarnav
+	//Test Solenoid and Compressor for Aarnav
 	public static final int solenoidPort = 0;
     public static final int compressorPort = 0;
+
+	//Buttons to toggle Compressor and Solenoid
+	public static final int solenoidButton = 0;
+	public static final int compressorButton = 0;
 }
