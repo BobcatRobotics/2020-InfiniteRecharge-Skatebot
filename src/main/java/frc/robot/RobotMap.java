@@ -56,4 +56,8 @@ public class RobotMap {
 	public static int wristLockSol = 4;       // Solenoid to engage wrist lock and peg leg latches
 	public static int panelGripSolenoid = 6;  // Solenoid to engage panel hold/release mechanism
 	public static int panelInOutSolenoid = 1; // Solenoid to move panel mechanism in/out
+
+	//Test Solenoids for Aarnav
+	public static final int solenoidPort = 0;
+    public static final int compressorPort = 0;
 }
