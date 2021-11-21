@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.commands.DriveSkateBot;
+import frc.robot.commands.PneumaticsTest;
 import frc.robot.lib.RioLoggerThread;
 
 /**
@@ -27,6 +28,7 @@ public class Robot extends TimedRobot {
   // Command m_autonomousCommand;
   // SendableChooser<Command> m_chooser = new SendableChooser<>();
   Command m_DriveWithJoysticks;
+  Command m_PneumaticsTest;
   // Command m_MoveElevator;
   // Command m_RunWrist;
 
@@ -34,6 +36,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
 
     m_DriveWithJoysticks = new DriveSkateBot();
+    m_PneumaticsTest = new PneumaticsTest();
     // m_MoveElevator = new MoveElevator();
     // m_RunWrist = new RunWrist();
   }
@@ -84,6 +87,7 @@ public class Robot extends TimedRobot {
   private void startCommands() {
     if (!commandsStarted) {
       m_DriveWithJoysticks.start();
+      m_PneumaticsTest.start();
       // m_MoveElevator.start();
       // m_RunWrist.start();
       // For testing always have joysticks available
