@@ -59,9 +59,7 @@ public class RobotMap {
 
 	//Test Solenoid and Compressor for Aarnav
 	public static final int solenoidPort = 0;
-    public static final int compressorPort = 0;
-
 	//Buttons to toggle Compressor and Solenoid
-	public static final int solenoidButton = 0;
-	public static final int compressorButton = 0;
+	public static final int solenoidButton = 2;
+	public static final int compressorButton = 3;
 }

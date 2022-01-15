@@ -60,7 +60,6 @@ public class OI {
   // Buttons
  // public static Button btnRollerIn = new JoystickButton(gamePad, RobotMap.cargoInB);
   //public static Button btnRollerOut = new JoystickButton(gamePad, RobotMap.cargoOutB);
-  public static Button btnTargetRobot = new JoystickButton(gamePad, 2);
   public static Button btnDriveStraight = new JoystickButton(gamePad, 1);
   public static Button btnToggleLED = new JoystickButton(gamePad, 4);
   // public static Button btnPanelHold = new JoystickButton(gamePad, RobotMap.panelHoldB);
@@ -89,7 +88,6 @@ public class OI {
     // btnRollerOut.whileHeld(new CargoRollerOut());
 
     //btnTargetRobot.whenPressed(new TargetBot());
-    btnTargetRobot.whenPressed(new TargetPIDBot());
     btnDriveStraight.whenPressed(new DriveStraight());
     btnToggleLED.whenPressed(new ToggleLimeLight());
 

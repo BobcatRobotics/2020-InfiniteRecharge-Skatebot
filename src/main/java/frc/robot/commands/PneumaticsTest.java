@@ -19,16 +19,16 @@ public class PneumaticsTest extends Command
 
     private void DisplayInfo()
     {
-        RioLogger.log("Solenoid status: " + testSolenoid.get());
-        RioLogger.log("Compressor status: " + testCompressor.enabled());
-        RioLogger.log("Is compressor pressure low? :" + (testCompressor.getPressureSwitchValue() ? "yes!" : "no"));
-        RioLogger.log("Compressor Current value: " + testCompressor.getCompressorCurrent());
+        System.out.println("Solenoid status: " + testSolenoid.get());
+        System.out.println("Compressor status: " + testCompressor.enabled());
+        System.out.println("Is compressor pressure low? :" + (testCompressor.getPressureSwitchValue() ? "yes!" : "no"));
+        System.out.println("Compressor Current value: " + testCompressor.getCompressorCurrent());
     }
     public PneumaticsTest()
     {
         super();
         testSolenoid = new Solenoid(RobotMap.solenoidPort);
-        testCompressor = new Compressor(RobotMap.compressorPort);
+        testCompressor = new Compressor();
         compressorButton = new JoystickButton(OI.gamePad, RobotMap.compressorButton);
         solenoidButton = new JoystickButton(OI.gamePad, RobotMap.solenoidButton);
     }
@@ -36,7 +36,9 @@ public class PneumaticsTest extends Command
     @Override
     public void initialize()
     {
-        RioLogger.log("Pneumatics Test Command Initialized :DDDDDDDDDDDDDDDDDD");        
+        System.out.println("Pneumatics Test Command Initialized :DDDDDDDDDDDDDDDDDD");
+        testSolenoid.set(true);
+        testSolenoid.set(false);
     }
 
     @Override
@@ -55,7 +57,7 @@ public class PneumaticsTest extends Command
     @Override
     public void end()
     {
-        RioLogger.errorLog("Pneumatics Testing Over");
+        System.out.println("Pneumatics Testing Over");
     }
 
     @Override
@@ -66,6 +68,6 @@ public class PneumaticsTest extends Command
 
     @Override 
     protected void interrupted(){
-        RioLogger.errorLog("Something fucking interrupted the Pneumatics Testing Command");
+        System.out.println("Something fucking interrupted the Pneumatics Testing Command");
     }
 }
