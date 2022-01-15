@@ -1,5 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.I2C.Port;
+import com.revrobotics.ColorSensorV3;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -56,4 +60,7 @@ public class RobotMap {
 	public static int wristLockSol = 4;       // Solenoid to engage wrist lock and peg leg latches
 	public static int panelGripSolenoid = 6;  // Solenoid to engage panel hold/release mechanism
 	public static int panelInOutSolenoid = 1; // Solenoid to move panel mechanism in/out
+
+	// Color Sensor
+	public static I2C.Port colorSensorPort = I2C.Port.kOnboard;
 }
